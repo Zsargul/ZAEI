@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <iostream.h>
+#include <string.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 
@@ -7,8 +7,8 @@
 #include "constants.h"
 
 int csv_lines(const char* filename) {
-	struct stat buffer;
-	if (stat (filename, &buffer) != 0) {
+	struct stat statBuff;
+	if (stat (filename, &statBuff) != 0) {
 		perror("File \"%s\" does not exist");
 		return -1;
 	}
@@ -27,10 +27,10 @@ int csv_lines(const char* filename) {
 	}
 
 	int lineCount = 0;
-	char buffer[MAX_STR_LEN];
-	while (fgets(buffer, sizeof(buffer), fp) != NULL) {
+	char buff[MAX_STR_LEN];
+	while (fgets(buff, sizeof(buff), fp) != NULL) {
 		/* Check if line ends with newline */
-		if (buffer[strlen(buffer) - 1] == '\n') {
+		if (buff[strlen(buff) - 1] == '\n') {
 			lineCount++;
 		}
 	}

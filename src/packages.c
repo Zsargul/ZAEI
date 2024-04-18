@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "packages.h"
 #include "parsecsv.h"
 
@@ -6,7 +8,7 @@ int install_packages() {
 	if (no_of_packages == -1)
 		exit(1);
 
-	Package *pkgs = (*Package) malloc(no_of_packages * sizeof(Package));
+	Package pkgs[no_of_packages];
 
 	return 0;
 }
