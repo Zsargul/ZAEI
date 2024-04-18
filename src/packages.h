@@ -3,10 +3,12 @@
 
 #include "constants.h"
 
-typedef struct pkg {
-	const char[MAX_STR_LEN];
+#define MAX_PKG_LEN 256
+
+typedef struct Package {
+	const char[MAX_PKG_LEN];
 	int req;
 	int on_aur;
-} pkg;
+} Package;
 
 #endif
