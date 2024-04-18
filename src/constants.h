@@ -5,5 +5,6 @@
 #define GIT_DOTS_URL ""
 #define PACKAGES_LIST_FILE "packages_list.csv"
 #define AUR_HELPER "yay"
+#define CSV_FIELDS 3
 
 #endif
