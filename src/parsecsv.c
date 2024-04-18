@@ -1,10 +1,18 @@
 #include <stdio.h>
+#include <iostream.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 
 #include "parsecsv.h"
 #include "constants.h"
 
 int csv_lines(const char* filename) {
+	struct stat buffer;
+	if (stat (filename, &buffer) != 0) {
+		perror("File \"%s\" does not exist");
+		return -1;
+	}
+
 	FILE *fp = fopen(filename, "r");
 	if (fp == NULL) {
 		perror("Error opening file");
