@@ -8,7 +8,10 @@
 typedef struct Package {
 	const char[MAX_PKG_LEN];
 	int req;
-	int on_aur;
+	int onAur;
 } Package;
+
+int install_packages();
+int install_package(Package *pkg);
 
 #endif
