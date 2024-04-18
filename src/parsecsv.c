@@ -8,7 +8,7 @@
 int csv_lines(const char* filename) {
 	FILE *fp = fopen(filename, "r");
 	if (fp == NULL) {
-		perror("Error opening file");
+		fprintf(stderr, "Error opening file %s", filename);
 		return -1;
 	}
 
@@ -35,7 +35,7 @@ int csv_lines(const char* filename) {
 int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 	FILE *fp = fopen(filename, "r");
 	if (fp == NULL) {
-		perror("Error opening file");
+		fprintf(stderr, "Error opening file %s", filename);
 		return -1;
 	}
 
@@ -47,7 +47,7 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 		return -1; /* Error reading header */
 	} else {
 		if (CSV_FIELDS != (sizeof(fields) / sizeof(fields[0]))) {
-			fprintf(stderr, "fields[] array is not the same size as the amount of fields in %s", PACKAGE_LIST_FILE);
+			fprintf(stderr, "fields[] array is not the same size as the amount of fields in %s\n", PACKAGE_LIST_FILE);
 			return -1;
 		}
 
@@ -66,7 +66,11 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 		
 		/* Get 0th (first) field */
 		const char* name = get_field(buff, 0);
-		
+		if (name == NULL) {
+			fprintf(stderr, "Error parsing csv. Field 'name' is null.");
+			return -1
+		}
+
 		const char* reqField = get_field(buff, 1);
 		const char* onAURfield = get_field(buff, 2);
 
