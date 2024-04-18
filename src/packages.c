@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "packages.h"
 #include "parsecsv.h"
@@ -19,15 +20,16 @@ int install_packages() {
 		exit(1);
 
 	for (size_t i = 0; i < no_of_packages; i++) {
-		int ret = install_package(pkgs[i]);
+		Package* pkgPtr = &pkgs[i];
+		int ret = install_package(pkgPtr);
 		
 		if (ret == -1) {
-			fprint(stderr, "%d: Package \"%s\", was not installed successfully, but it is not required.\n", i, pkgs[i].name);
+			fprintf(stderr, "%zd: Package \"%s\", was not installed successfully, but it is not required.\n", i, pkgs[i].name);
 		} else if (ret == -2) {
-			fprintf(stderr, "%d: REQUIRED Package \"%s\", was not installed successfully. Exiting.\n", i, pkgs[i].name);
+			fprintf(stderr, "%zd: REQUIRED Package \"%s\", was not installed successfully. Exiting.\n", i, pkgs[i].name);
 			exit(1);
 		} else {
-			fprintf(stdout, "%d: %s installed successfully\n", pkgs[i].name);
+			fprintf(stdout, "%zd: %s installed successfully\n", i,pkgs[i].name);
 		}
 	}
 
