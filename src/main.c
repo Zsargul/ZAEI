@@ -36,5 +36,5 @@ int main(int argc, char **argv) {
 		/* Skip over any non-option arguments */
 	}
 
-	return 0;
+	return EXIT_SUCCESS;
 }
