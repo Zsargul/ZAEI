@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "packages.h"
 #include "parsecsv.h"
@@ -29,7 +30,7 @@ int install_packages() {
 			fprintf(stderr, "%zd: REQUIRED Package \"%s\", was not installed successfully. Exiting.\n", i, pkgs[i].name);
 			exit(EXIT_FAILURE);
 		} else {
-			fprintf(stdout, "%zd: %s installed successfully\n", i,pkgs[i].name);
+			fprintf(stdout, "%zd: %s installed successfully\n", i, pkgs[i].name);
 		}
 	}
 
