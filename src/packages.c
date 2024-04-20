@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "packages.h"
 #include "parsecsv.h"
@@ -22,6 +23,7 @@ int install_packages() {
 
 	for (size_t i = 0; i < no_of_packages; i++) {
 		Package* pkgPtr = &pkgs[i];
+
 		int ret = install_package(pkgPtr);
 		
 		if (ret == -1) {
@@ -41,10 +43,51 @@ int install_packages() {
 int install_package(Package *pkg) {
 	int mustInstall = pkg->req;
 
-	if (pkg->onAur) { /* Use AUR helper for installing this package */
-	
-	} else { /* Install from official repos */
-	
+	char cmd[MAX_STR_LEN];
+	const char *cmd_args[] = { 
+		[0] = "--noconfirm", 
+		[1] = "--needed",
+		[2] = "-S",
+		[3] = NULL,
+	};
+
+	const pid_t forkPid = fork();
+
+	switch (forkPid) {
+		case -1:
+			const int forkErrno = errno; /* Save error code */
+			fprintf(stderr, "Could not fork new process: %s\n",
+					strerror(forkErrno));
+			return forkErrno;
+		case 0: /* Child process */
+			fprintf(stdout, "Child process executing: %s...\n", cmd);
+
+			/* Use AUR helper or official repos for installation */
+			cmd = (pkg->onAur) ? AUR_HELPER : "pacman";
+
+			const int execResult = execvp(exec_cmd, (char **)cmd_args);
+
+			assert(execResult == -1); /* Exec only returns on errors */
+			int const execErrno = errno;
+			fprintf(stderr, "Failure using execvp() with package installation command: %s\n", strerror(execErrno));
+
+			return execErrno;
+		default:
+			fprintf(stdout, "Forking process and waiting for PID %d\n", forkPid);
+			int childResult = -1;
+			const pid_t waitResult = wait(&childResult);
+
+			if (waitResult == -1) {
+				const int forkErrno = errno;
+				fprintf(stderr, "Could not wait for PID %d\n", forkPid, strerror(forkErrno));
+
+				return forkErrno;
+			}
+
+			/* Assert that what we forked is what we waited for */
+			assert(forkPid == waitResult);
+			fprintf(stdout, "Child process with PID %d exited with a status of %d\n", forkPid, childResult);
+			break;
 	}
 
 	return 0;
