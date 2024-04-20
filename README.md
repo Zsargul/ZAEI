@@ -1,4 +1,4 @@
-![ZAEI Logo](../img/logo.png)
+![ZAEI Logo](img/logo.png)
 
 **<h2 align="center">Zsargul's Artix Environment Initializer</h2>**
 
