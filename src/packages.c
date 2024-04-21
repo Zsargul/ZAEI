@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <assert.h>
+#include <errno.h>
 
 #include "packages.h"
 #include "parsecsv.h"
@@ -65,7 +67,7 @@ int install_package(Package *pkg) {
 			/* Use AUR helper or official repos for installation */
 			cmd = (pkg->onAur) ? AUR_HELPER : "pacman";
 
-			const int execResult = execvp(exec_cmd, (char **)cmd_args);
+			const int execResult = execvp(cmd, (char **)cmd_args);
 
 			assert(execResult == -1); /* Exec only returns on errors */
 			int const execErrno = errno;
@@ -79,7 +81,7 @@ int install_package(Package *pkg) {
 
 			if (waitResult == -1) {
 				const int forkErrno = errno;
-				fprintf(stderr, "Could not wait for PID %d\n", forkPid, strerror(forkErrno));
+				fprintf(stderr, "Could not wait for PID %d: %s\n", forkPid, strerror(forkErrno));
 
 				return forkErrno;
 			}
