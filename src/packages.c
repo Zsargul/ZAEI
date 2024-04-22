@@ -29,9 +29,9 @@ int install_packages() {
 
 		int ret = install_package(pkgPtr);
 		
-		if (ret == -1) {
+		if (ret != 0 && pkgPtr->req) {
 			fprintf(stderr, "%zd: Package %s, was not installed successfully, but it is not required.\n", i, *(pkgs[i].name));
-		} else if (ret == -2) {
+		} else if (ret != 0 && !(pkgPtr->req)) {
 			fprintf(stderr, "%zd: REQUIRED Package %s, was not installed successfully. Exiting.\n", i, *(pkgs[i].name));
 			exit(EXIT_FAILURE);
 		} else {
@@ -44,8 +44,6 @@ int install_packages() {
 }
 
 int install_package(Package *pkg) {
-	int mustInstall = pkg->req;
-
 	char cmd[MAX_STR_LEN];
 	const char *cmd_args[] = { 
 		[0] = "--noconfirm", 
@@ -95,4 +93,3 @@ int install_package(Package *pkg) {
 
 	return 0;
 }
-
