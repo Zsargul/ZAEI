@@ -22,17 +22,17 @@ int main(int argc, char **argv) {
 	char* d_value = NULL;
 
 	/* Possible short arguments */
-	const char *optstring = "c:d:";
+	const char *shortOptions = "c:d:bh";
 
 	struct option longOptions[] = {
 		{"csv", 	required_argument, 	&c_flag, 	'c'},
 		{"dwm", 	required_argument, 	&d_flag, 	'd'},
 		{"help", 	no_argument, 		&h_flag, 	'h'},
-		{"debug",	no_argument,		&dbg_flag,	0},
+		{"debug",	no_argument,		&dbg_flag,	'b'},
 		{0, 0, 0, 0}
 	};
 
-	while ((opt = getopt_long(argc, argv, optstring, longOptions, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, shortOptions, longOptions, NULL)) != -1) {
 		switch (opt) {
 			case 'c': /* -c */
 				printf("c rec");
@@ -48,6 +48,11 @@ int main(int argc, char **argv) {
 				printf("h rec");
 				h_flag = 1;
 				usage(name);
+				break;
+			case 'b':
+				dbg_flag = 1;
+				enable_debug_mode();
+				dbg_fprintf(stdout, "! Enabled debug messages !\n");
 				break;
 			case '?': /* Invalid option or missing argument */
 				err(name, "Unrecognised argument\n");

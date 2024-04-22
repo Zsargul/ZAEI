@@ -65,7 +65,6 @@ int _mkdir(const char* dirPath) {
 				free(_path);
 				return ret;
 			}
-
 			*p = '/';
 		}
 	}
