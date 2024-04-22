@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <getopt.h>
 
+#include "util.h"
+
 static void err(char* progName, char* errStr);
 static void usage(char* progName);
 
