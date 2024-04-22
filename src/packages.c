@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <assert.h>
 #include <errno.h>
+#include <sys/wait.h>
 
 #include "packages.h"
 #include "parsecsv.h"
@@ -29,12 +30,12 @@ int install_packages() {
 		int ret = install_package(pkgPtr);
 		
 		if (ret == -1) {
-			fprintf(stderr, "%zd: Package \"%s\", was not installed successfully, but it is not required.\n", i, pkgs[i].name);
+			fprintf(stderr, "%zd: Package %s, was not installed successfully, but it is not required.\n", i, *(pkgs[i].name));
 		} else if (ret == -2) {
-			fprintf(stderr, "%zd: REQUIRED Package \"%s\", was not installed successfully. Exiting.\n", i, pkgs[i].name);
+			fprintf(stderr, "%zd: REQUIRED Package %s, was not installed successfully. Exiting.\n", i, *(pkgs[i].name));
 			exit(EXIT_FAILURE);
 		} else {
-			fprintf(stdout, "%zd: %s installed successfully\n", i, pkgs[i].name);
+			fprintf(stdout, "%zd: %s installed successfully\n", i, *(pkgs[i].name));
 		}
 	}
 
@@ -65,7 +66,7 @@ int install_package(Package *pkg) {
 			fprintf(stdout, "Child process executing: %s...\n", cmd);
 
 			/* Use AUR helper or official repos for installation */
-			cmd = (pkg->onAur) ? AUR_HELPER : "pacman";
+			strcpy(cmd, pkg->onAur ? AUR_HELPER : "pacman");
 
 			const int execResult = execvp(cmd, (char **)cmd_args);
 
