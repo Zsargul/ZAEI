@@ -51,6 +51,7 @@ int dwm_clone_git(const char* repoUrl, const char* targetDir) {
 
 	/* Download repo */
 	snprintf(command, sizeof(command), "git clone %s %s", repoUrl, targetDir);
+	/* TODO: Change this to a fork()/exec() call */
 	int ret = system(command);
 
 	if (ret == 0) {
@@ -63,6 +64,7 @@ int dwm_clone_git(const char* repoUrl, const char* targetDir) {
 	return 0;
 }
 
+/* TODO: Change this to a fork()/exec() call */
 int repo_exists(const char* repoUrl) {
 	char cmd[MAX_STR_LEN];
 	snprintf(cmd, sizeof(cmd), "git ls-remote %s", repoUrl);

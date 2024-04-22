@@ -98,6 +98,7 @@ int dbg_fprintf(FILE *stream, const char *format, ...) {
 	return done;
 }
 
+/* TODO: Change system() to fork()/exec() */
 int git_installed() {
 	if (system("git --version") != 0)
 		return 1;
