@@ -97,3 +97,10 @@ int dbg_fprintf(FILE *stream, const char *format, ...) {
 
 	return done;
 }
+
+int git_installed() {
+	if (system("git --version") != 0)
+		return 1;
+
+	return 0;
+}

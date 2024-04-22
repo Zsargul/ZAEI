@@ -34,6 +34,10 @@ int dwm_clone_git(const char* repoUrl, const char* targetDir) {
 	char command[MAX_STR_LEN];
 
 	/* Check if git is installed here */
+	if (git_installed() != 0) {
+		fprintf(stderr, "Git is not installed/configured correctly on your system. Please install git before running this tool with any git-related flags.\n");
+		exit(EXIT_FAILURE);
+	}
 
 	/* Create specified directory if it does not exist */
 	struct stat st;
