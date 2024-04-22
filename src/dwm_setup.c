@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 
 #include "dwm_setup.h"
 #include "constants.h"
 #include "util.h"
 
 int setup_dwm(const char* repoUrl) {
-	char* fullPath[MAX_STR_LEN];
+	char fullPath[MAX_STR_LEN];
 	const char* configPath = ".config";
 	const char* dwmPath = "suckless";
 	const char* home;
@@ -38,7 +39,7 @@ int dwm_clone_git(const char* repoUrl, const char* targetDir) {
 	struct stat st;
 	if (stat(targetDir, &st) != 0) {
 		fprintf(stdout, "Directory %s does not exist. Creating it...\n", targetDir);
-		if (_mkdir(targetDir, 0777) != 0) {
+		if (_mkdir(targetDir) != 0) {
 			fprintf(stderr, "Error creating directory %s. Exiting...\n", targetDir);
 			exit(EXIT_FAILURE);
 		}
@@ -60,7 +61,7 @@ int dwm_clone_git(const char* repoUrl, const char* targetDir) {
 
 int repo_exists(const char* repoUrl) {
 	char cmd[MAX_STR_LEN];
-	snprintf(cmd, sizeof(cmd), "git ls-remote %s", remoteUrl));
+	snprintf(cmd, sizeof(cmd), "git ls-remote %s", repoUrl);
 
 	return system(cmd);
 }
