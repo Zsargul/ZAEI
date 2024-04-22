@@ -1,7 +1,9 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <stdarg.h>
 
 #include "util.h"
 
@@ -80,4 +82,19 @@ int _mkdir(const char* dirPath) {
 
 void enable_debug_mode() {
 	debugMode = 1;
+}
+
+/* Wrapper for fprintf for debugging */
+int dbg_fprintf(FILE *stream, const char *format, ...) {
+	if (!debugMode)
+		return 0;
+
+	va_list arg;
+	int done;
+
+	va_start(arg, format);
+	done = vfprintf(stream, format, arg);
+	va_end(arg);
+
+	return done;
 }
