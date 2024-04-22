@@ -11,7 +11,7 @@ int _mkdir(const char* dir) {
 	char *_path = NULL;
 	char *p;
 	int ret = -1;
-	mode_t mode = 0777;
+	mode_t mode = 0755; /* rwx r-x r-x */
 
 	errno = 0;
 
