@@ -34,12 +34,12 @@ int main(int argc, char **argv) {
 
 	while ((opt = getopt_long(argc, argv, shortOptions, longOptions, NULL)) != -1) {
 		switch (opt) {
-			case 'c': /* -c */
+			case 'c':
 				printf("c rec");
 				c_flag = 1;
 				c_value = optarg;
 				break;
-			case 'd': /* -d */
+			case 'd': 
 				printf("d rec");
 				d_flag = 1;
 				d_value = optarg;
@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
 				dbg_fprintf(stdout, "! Enabled debug messages !\n");
 				break;
 			case '?': /* Invalid option or missing argument */
-				err(name, "Unrecognised argument\n");
+				err_usage(name, "Unrecognised argument\n");
 				exit(EXIT_FAILURE);
 		}
 	}
@@ -78,11 +78,3 @@ int main(int argc, char **argv) {
 	return EXIT_SUCCESS;
 }
 
-static void err(char* progName, char* errStr) {
-	fprintf(stderr, "%s\n", errStr);
-	usage(progName);
-}
-
-static void usage(char* progName) {
-	fprintf(stdout, "Usage: %s\n", progName);
-}

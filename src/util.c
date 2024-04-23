@@ -105,3 +105,12 @@ int git_installed() {
 
 	return 0;
 }
+
+void err_usage(char* progName, char* errStr) {
+	fprintf(stderr, "%s\n", errStr);
+	usage(progName);
+}
+
+void usage(char* progName) {
+	fprintf(stdout, "Usage: %s\n", progName);
+}
