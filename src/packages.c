@@ -7,7 +7,7 @@
 #include <sys/wait.h>
 
 #include "packages.h"
-#include "parsecsv.h"
+#include "util/parsecsv.h"
 
 /* TODO: Stick to one naming convention for variables for christ's sake */
 int install_packages() {
@@ -35,28 +35,28 @@ int install_packages() {
 
 		int ret = install_package(pkgPtr);
 		
-		fprintf(stdout, "[%d/%d]", i+1, packageCount);
+		fprintf(stdout, "[%ld/%d]", i+1, packageCount);
 		if (ret != 0 && pkgPtr->req) {
-			fprintf(stderr, "%zd: Package %s, was not installed successfully, but it is not required.\n", i, *(pkgs[i].name));
+			fprintf(stderr, "%ld: Package %s, was not installed successfully, but it is not required.\n", i, *(pkgs[i].name));
 		} else if (ret != 0 && !(pkgPtr->req)) {
-			fprintf(stderr, "%zd: REQUIRED Package %s, was not installed successfully. Exiting.\n", i, *(pkgs[i].name));
+			fprintf(stderr, "%ld: REQUIRED Package %s, was not installed successfully. Exiting.\n", i, *(pkgs[i].name));
 			exit(EXIT_FAILURE);
 		} else {
-			fprintf(stdout, "%zd: %s installed successfully\n", i, *(pkgs[i].name));
+			fprintf(stdout, "%ld: %s installed successfully\n", i, *(pkgs[i].name));
 
 			successfulInstalls++;
-			(pkgPtr->onAur) ? aurPksCount++ : officialPkgsCount++;
+			(pkgPtr->onAur) ? aurPkgsCount++ : officialPkgsCount++;
 		}
 	}
 
 	fprintf(stdout,
-			"Successfully installed %d/%d packages.\n
-			Packages from official repositories: %d\n
-			Packages from Arch user repository: %d\n",
+			"Successfully installed %d/%d packages.\n"
+			"Packages from official repositories: %d\n"
+			"Packages from Arch user repository: %d\n",
 			successfulInstalls,
 			packageCount,
-			officialPksCount,
-			AurPkgsCount);
+			officialPkgsCount,
+			aurPkgsCount);
 
 
 

@@ -1,5 +1,5 @@
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef MISCUTILS_H
+#define MISCUTILS_H
 
 int _mkdir(const char* dir);
 void enable_debug_mode();

@@ -4,7 +4,7 @@
 
 #include "dwm_setup.h"
 #include "constants.h"
-#include "util.h"
+#include "util/miscutils.h"
 
 int setup_dwm(const char* repoUrl) {
 	char fullPath[MAX_STR_LEN];

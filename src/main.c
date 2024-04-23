@@ -3,10 +3,7 @@
 #include <unistd.h>
 #include <getopt.h>
 
-#include "util.h"
-
-static void err(char* progName, char* errStr);
-static void usage(char* progName);
+#include "util/miscutils.h"
 
 int main(int argc, char **argv) {
 	char* name = argv[0];
@@ -45,6 +42,7 @@ int main(int argc, char **argv) {
 			case 'h':
 				h_flag = 1;
 				usage(name);
+				exit(EXIT_SUCCESS);
 				break;
 			case 'b':
 				dbg_flag = 1;
@@ -59,12 +57,12 @@ int main(int argc, char **argv) {
 
 	/* Check for required arguments */
 	if (!c_flag) {
-		err(name, "Path to .csv package list is required\n");
+		err_usage(name, "Path to .csv package list is required\n");
 		exit(EXIT_FAILURE);
 	}
 
 	if (!d_flag) {
-		err(name, "URL to dwm repo is required\n");
+		err_usage(name, "URL to dwm repo is required\n");
 		exit(EXIT_FAILURE);
 	}
 
