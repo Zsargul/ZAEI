@@ -112,5 +112,13 @@ void err_usage(char* progName, char* errStr) {
 }
 
 void usage(char* progName) {
-	fprintf(stdout, "Usage: %s\n", progName);
+	char *helpMsg =
+		"  -c, --csv			Path to .csv file containing list of packages to install from official repos/AUR"
+		"  -d, --dwm			Optional argument for URL to git repository hosting a build of DWM. If no URL is\n"
+		"						provided with this flag, the standard suckless release of DWM will be cloned.\n"
+		"  -h, --help			Print usage help and program information\n"
+		"  -b, --debug			Enable debug mode, which gives more verbose logs\n"
+		;
+
+	fprintf(stdout, "Usage: %s\n\n%s", progName, helpMsg);
 }

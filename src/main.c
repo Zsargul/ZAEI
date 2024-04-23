@@ -35,17 +35,14 @@ int main(int argc, char **argv) {
 	while ((opt = getopt_long(argc, argv, shortOptions, longOptions, NULL)) != -1) {
 		switch (opt) {
 			case 'c':
-				printf("c rec");
 				c_flag = 1;
 				c_value = optarg;
 				break;
 			case 'd': 
-				printf("d rec");
 				d_flag = 1;
 				d_value = optarg;
 				break;
 			case 'h':
-				printf("h rec");
 				h_flag = 1;
 				usage(name);
 				break;
