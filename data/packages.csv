@@ -1,0 +1,4 @@
+name,required,onAur
+ffmpeg,no,no
+gvim,no,no
+yt-dlp-git,no,yes

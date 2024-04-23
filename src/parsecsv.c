@@ -68,7 +68,7 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 		/* Get 0th (first) field */
 		name = get_field(tmp, 0);
 		if (name == NULL) {
-			fprintf(stderr, "Error parsing csv. Field 'name' is null.");
+			fprintf(stderr, "Error parsing csv. Value in field '%s' is null.", fields[0]);
 			exit(EXIT_FAILURE);
 		}
 
