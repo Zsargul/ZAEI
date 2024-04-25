@@ -8,7 +8,6 @@
 /* Used to parse arguments and other configurations. Essentially just
  * opt handling but off-loaded from main. */
 int init_config(int argc, int **argv) {
-
 	char* name = argv[0];
 	int opt;
 	
@@ -18,12 +17,12 @@ int init_config(int argc, int **argv) {
 	int h_flag = 0;
 	int dbg_flag = 0;
 
-	char* c_value = NULL;
 	char* d_value = NULL;
 
 	/* Possible short arguments */
 	const char *shortOptions = "c:d:bh";
 
+	/* TODO: Debug and check that ALL of these work, short and long options */
 	struct option longOptions[] = {
 		{"csv", 	required_argument, 	&c_flag, 	'c'},
 		{"dwm", 	required_argument, 	&d_flag, 	'd'},
@@ -36,11 +35,11 @@ int init_config(int argc, int **argv) {
 		switch (opt) {
 			case 'c':
 				c_flag = 1;
-				c_value = optarg;
+				Config.package_csv_path = optarg;
 				break;
 			case 'd': 
 				d_flag = 1;
-				d_value = optarg;
+				Config.dwm_url_path = optarg;
 				break;
 			case 'h':
 				h_flag = 1;
