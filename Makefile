@@ -1,23 +1,27 @@
 # Compiler
 CC := gcc
 
-# Source directories
+# Directories
 SRC_DIR := src
 OBJ_DIR := obj
 BIN_DIR := bin
+LIB_DIR := lib
 SUB_DIRS := util
+INCLUDE_DIR := include
+LIB_INCLUDES := $(INCLUDE_DIR)/libs
 
 # Final binary
 TARGET := $(BIN_DIR)/zaei
 
 # Flags (Libraries and includes blank for now)
-CFLAGS := -g -Wall -O2
+CFLAGS := -g -Wall -O2 -I$(LIB_INCLUDES) -I$(INCLUDE_DIR)
 
 # ----------------------------
 # Compile and link into binary
 # ----------------------------
 SOURCES := $(shell find $(SRC_DIR) -name "*.c")
 OBJECTS := $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
+LIBS := -L$(LIB_DIR) -lconfig
 
 # Default target
 all: $(TARGET)
@@ -27,7 +31,7 @@ $(shell mkdir -p $(OBJ_DIR) $(BIN_DIR))
 $(shell mkdir -p $(addprefix $(OBJ_DIR)/, $(SUB_DIRS)))
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
