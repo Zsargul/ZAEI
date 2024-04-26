@@ -5,7 +5,7 @@
 #include <errno.h>
 #include <stdarg.h>
 
-#include "miscutils.h"
+#include "util/miscutils.h"
 
 static int debugMode = 0;
 

@@ -8,8 +8,6 @@
 #include "util/miscutils.h"
 
 int main(int argc, char **argv) {
-	config_t cfg;
-	init_config(&cfg);	
 
 	return EXIT_SUCCESS;
 }

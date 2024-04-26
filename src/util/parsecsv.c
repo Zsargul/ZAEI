@@ -2,9 +2,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "parsecsv.h"
-#include "../constants.h"
-#include "../packages.h"
+#include "util/parsecsv.h"
+#include "constants.h"
+#include "packages.h"
 
 int csv_lines(const char* filename) {
 	FILE *fp = fopen(filename, "r");
