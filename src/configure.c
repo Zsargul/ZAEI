@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <getopt.h>
 
+#include <libconfig.h>
+
 #include "util/miscutils.h"
 #include "configure.h"
 
@@ -21,33 +23,23 @@ int init_config(int argc, char **argv) {
 	int dbg_flag = 0;
 
 	/* Possible short arguments */
-	const char *shortOptions = "c:d:bh";
+	const char *shortOptions = "dh";
 
 	/* TODO: Debug and check that ALL of these work, short and long options */
 	struct option longOptions[] = {
-		{"csv", 	required_argument, 	&c_flag, 	'c'},
-		{"dwm", 	required_argument, 	&d_flag, 	'd'},
 		{"help", 	no_argument, 		&h_flag, 	'h'},
-		{"debug",	no_argument,		&dbg_flag,	'b'},
+		{"debug",	no_argument,		&dbg_flag,	'd'},
 		{0, 0, 0, 0}
 	};
 
 	while ((opt = getopt_long(argc, argv, shortOptions, longOptions, NULL)) != -1) {
 		switch (opt) {
-			case 'c':
-				c_flag = 1;
-				config.package_csv_path = optarg;
-				break;
-			case 'd': 
-				d_flag = 1;
-				config.dwm_git_url = optarg;
-				break;
 			case 'h':
 				h_flag = 1;
 				usage(name);
 				exit(EXIT_SUCCESS);
 				break;
-			case 'b':
+			case 'd':
 				dbg_flag = 1;
 				enable_debug_mode();
 				dbg_fprintf(stdout, "! Enabled debug messages !\n");
@@ -74,4 +66,10 @@ int init_config(int argc, char **argv) {
 	}
 
 	return 0;
+}
+
+int read_config_file() {
+	config_t cfg;
+	config_init(&cfg);
+	return 0;	
 }
