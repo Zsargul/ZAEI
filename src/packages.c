@@ -10,8 +10,8 @@
 #include "util/parsecsv.h"
 
 /* TODO: Stick to one naming convention for variables for christ's sake */
-int install_packages() {
-	int packageCount = csv_lines(PACKAGES_LIST_FILE);
+int install_packages(const char* pkgsListFile) {
+	int packageCount = csv_lines(pkgsListFile);
 	if (packageCount == -1)
 		exit(EXIT_FAILURE);
 
@@ -22,7 +22,7 @@ int install_packages() {
 		exit(EXIT_FAILURE);
 	}
 
-	if (parse_package_list(PACKAGES_LIST_FILE, pkgs, packageCount) == -1)
+	if (parse_package_list(pkgsListFile, pkgs, packageCount) == -1)
 		exit(EXIT_FAILURE);
 
 	int successfulInstalls = 0;

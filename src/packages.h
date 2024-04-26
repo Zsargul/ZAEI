@@ -11,7 +11,7 @@ typedef struct Package {
 	int onAur;
 } Package;
 
-int install_packages();
+int install_packages(const char* pksListFile);
 int install_package(Package *pkg);
 
 #endif

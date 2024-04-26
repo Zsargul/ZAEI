@@ -5,12 +5,12 @@
  * based on the arguments passed to the program. This
  * is later used by the main function to perform setup
  * actions accordingly. */
-struct Config {
+typedef struct Config {
 	const char* package_csv_path;
 	const char* dwm_git_url;
 
-};
+} Config;
 
-int init_config(int argc, int **argv);
+int init_config(int argc, char **argv);
 
 #endif

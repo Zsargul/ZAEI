@@ -3,11 +3,14 @@
 #include <unistd.h>
 #include <getopt.h>
 
-#include "opt_handler.h"
+#include "util/miscutils.h"
+#include "configure.h"
+
+Config config;
 
 /* Used to parse arguments and other configurations. Essentially just
  * opt handling but off-loaded from main. */
-int init_config(int argc, int **argv) {
+int init_config(int argc, char **argv) {
 	char* name = argv[0];
 	int opt;
 	
@@ -16,8 +19,6 @@ int init_config(int argc, int **argv) {
 	int d_flag = 0;
 	int h_flag = 0;
 	int dbg_flag = 0;
-
-	char* d_value = NULL;
 
 	/* Possible short arguments */
 	const char *shortOptions = "c:d:bh";
@@ -35,11 +36,11 @@ int init_config(int argc, int **argv) {
 		switch (opt) {
 			case 'c':
 				c_flag = 1;
-				Config.package_csv_path = optarg;
+				config.package_csv_path = optarg;
 				break;
 			case 'd': 
 				d_flag = 1;
-				Config.dwm_url_path = optarg;
+				config.dwm_git_url = optarg;
 				break;
 			case 'h':
 				h_flag = 1;

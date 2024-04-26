@@ -48,7 +48,7 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 		return -1; /* Error reading header */
 	} else {
 		if (CSV_FIELDS != (sizeof(fields) / sizeof(fields[0]))) {
-			fprintf(stderr, "fields[] array is not the same size as the amount of fields in %s\n", PACKAGES_LIST_FILE);
+			fprintf(stderr, "fields[] array is not the same size as the amount of fields in %s\n", filename);
 			exit(EXIT_FAILURE);
 		}
 
