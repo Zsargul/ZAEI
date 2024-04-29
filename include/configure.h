@@ -9,10 +9,9 @@ typedef struct Config {
 	const char* aur_helper;
 	const char* package_csv_path;
 	const char* dwm_git_url;
-
 } Config;
 
-int init_config(int argc, char **argv);
+int init_config(Config* config);
 int opt_handler(int argc, char **argv);
 
 #endif

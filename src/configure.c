@@ -9,7 +9,7 @@
 #include "util/miscutils.h"
 #include "configure.h"
 
-int init_config(int argc, char **argv, Config* config) {
+int init_config(Config* config) {
 	config_t cfg;
 	config_init(&cfg);
 
