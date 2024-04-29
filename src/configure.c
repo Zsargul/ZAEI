@@ -34,7 +34,7 @@ int init_config(Config* config) {
 	}
 	
 	/* Get path to packages .csv file */
-	if (config_lookup_string(&cfg, "packages_file", &config->packages_csv_path)) { 
+	if (config_lookup_string(&cfg, "packages_csv_path", &config->packages_csv_path)) { 
 		dbg_fprintf(stdout, "Config - Found packages_csv_path: %s\n", config->packages_csv_path);
 	} else {
 		fprintf(stderr, "Unable to find 'packages_file' value in %s!\n", CONFIG_FILE);
