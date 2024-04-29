@@ -6,11 +6,8 @@
 #include "constants.h"
 #include "util/miscutils.h"
 
-int setup_dwm(const char* repoUrl) {
+int setup_dwm(const char* repoUrl, const char* destPath) {
 	char fullPath[MAX_STR_LEN];
-	const char* configPath = ".config";
-	const char* dwmPath = "suckless";
-	const char* home;
 
 	/* Check if repo exists */
 	if (repo_exists(repoUrl)) {
@@ -20,12 +17,7 @@ int setup_dwm(const char* repoUrl) {
 		exit(EXIT_FAILURE);
 	}
 
-	/* Concatenate the full destination of the dwm directory. Maybe later let this be an argument rather
-	 * than being hard-coded */
-	home = getenv("HOME");
-	snprintf(fullPath, sizeof(fullPath), "%s/%s/%s/", home, configPath, dwmPath);
-
-	dwm_clone_git(repoUrl, fullPath);
+	dwm_clone_git(repoUrl, destPath);
 
 	return 0;	
 }
