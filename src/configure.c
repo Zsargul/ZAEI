@@ -5,10 +5,31 @@
 
 #include <libconfig.h>
 
+#include "constants.h"
 #include "util/miscutils.h"
 #include "configure.h"
 
-Config config;
+int init_config(int argc, char **argv, Config* config) {
+	config_t cfg;
+	config_init(&cfg);
+
+	if (config_read_file(&cfg, CONFIG_FILE) != CONFIG_TRUE) {
+		fprintf(stderr, "Libconfig error: %s:%d - %s\n", config_error_file(&cfg), 
+				config_error_text(&cfg), config_error_text(&cfg));
+		return -1;
+	}
+
+	/* Get AUR helper */
+	if (config_lookup_string(&cfg, "aur_helper", &config->aur_helper)) {
+		printf("found aur_helper: %s\n", config->aur_helper);
+	}
+
+	if (config_lookup_string(&cfg, "packages_file", &config->packages_file)) {
+		dprintf("Config:
+	}
+
+	
+}
 
 /* Used to parse arguments and other configurations. Essentially just
  * opt handling but off-loaded from main. */

@@ -10,6 +10,12 @@
 /* TODO: Include libonfig system path in makefile instead of just copying the header into include/. Same
  * goes for .a library */
 int main(int argc, char **argv) {
+	Config* config = (Config*)malloc(sizeof(Config));
+
+	if (init_config(config) != 0) {
+		free(config);
+		return EXIT_FAILURE;
+	}
 
 	return EXIT_SUCCESS;
 }
