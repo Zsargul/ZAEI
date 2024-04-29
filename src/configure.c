@@ -25,6 +25,7 @@ int init_config(Config* config) {
 	 * is commented out for example, it should be set to NULL in the Config struct. It should later be checked if that
 	 * value is NULL before actually doing any setup with it.
 	 * */
+
 	/* Get AUR helper */
 	if (config_lookup_string(&cfg, "aur_helper", &config->aur_helper)) {
 		dbg_fprintf(stdout, "Config - Found aur_helper: %s\n", config->aur_helper);
@@ -33,42 +34,57 @@ int init_config(Config* config) {
 		return -1;
 	}
 	
+	/* TODO: Clean up the output messages below */
+
 	/* Get path to packages .csv file */
 	if (config_lookup_string(&cfg, "packages_csv_path", &config->packages_csv_path)) { 
 		dbg_fprintf(stdout, "Config - Found packages_csv_path: %s\n", config->packages_csv_path);
 	} else {
-		fprintf(stderr, "Unable to find 'packages_file' value in %s!\n", CONFIG_FILE);
+		fprintf(stderr, "Unable to find 'packages_file' field in config file!\n");
 		return -1;
 	}
 
-	/* Get DWM git URL */
+	/* [OPTIONAL]  Get DWM git URL */
 	if (config_lookup_string(&cfg, "dwm_git_url", &config->dwm_git_url)) {
 		dbg_fprintf(stdout, "Config - Found dwm_git_url: %s\n", config->dwm_git_url);
 	} else {
-		fprintf(stderr, "Unable to find 'dwm_git_url' value in %s!\n", CONFIG_FILE);
-		return -1;
+		fprintf(stderr, "Didn't find field 'dwm_git_url' in config file. Skipping...\n");
+		config->dwm_git_url = NULL;
 	}
 
-	/* Get DWM blocks git URL */
+	/* [OPTIONAL] Get DWM blocks git URL */
 	if (config_lookup_string(&cfg, "dwmblocks_git_url", &config->dwmblocks_git_url)) {
 		dbg_fprintf(stdout, "Config - Found dwmblocks_git_url: %s\n", config->dwmblocks_git_url);
 	} else {
-		fprintf(stderr, "Unable to find 'dwmblocks_git_url' value in %s\n", CONFIG_FILE);
+		fprintf(stdout, "Didn't find field 'dwmblocks_git_url' in config file. Skipping...\n");
+		config->dwmblocks_git_url = NULL;
 	}
 
-	/* Get DWM install directory */
+	/* [OPTIONAL] Get DWM install directory */
 	if (config_lookup_string(&cfg, "dwm_dir", &config->dwm_dir)) {
-		dbg_fprintf(stdout, "Config - Found dwm_dir: %s\n", config->dwm_dir);
+		if (dwm_git_url == NULL) {
+			fprintf(stdout, "WARNING: Found target directory for DWM installation in config file, but the variable 'dwm_git_url' is not set. Will not proceed with DWM installation.\n");
+		} else {
+			dbg_fprintf(stdout, "Config - Found dwm_dir: %s\n", config->dwm_dir);
+		}
 	} else {
-		fprintf(stderr, "Unable to find 'dwm_dir' value in %s\n", CONFIG_FILE);
+		fprintf(stdpit, "Didn't find 'dwm_dir' value in config file. Skipping...\n");
 	}
 
-	/* Get DWM blocks install directory */
+	/* [OPTIONAL] Get DWM blocks install directory */
 	if (config_lookup_string(&cfg, "dwmblocks_dir", &config->dwmblocks_dir)) {
-		dbg_fprintf(stdout, "Config - Found dwmblocks_dir: %s\n", config->dwmblocks_dir);
+		if (config->dwmblocks_url == NULL) {
+			fprintf(stdout, "WARNING: Found target directory for DWMblocks installation in config file, but the variable 'dwmblocks_git_url' is not set. Will not proceed with DWMblocks installation.\n");
+		} else {
+			dbg_fprintf(stdout, "Config - Found dwmblocks_dir: %s\n", config->dwmblocks_dir);
+		}
 	} else {
-		fprintf(stderr, "Unable to find 'dwmblocks_dir' value in %s\n", CONFIG_FILE);
+		fprintf(stdout, "Didn't find 'dwmblocks_dir' value in config file. Skipping...\n");
 	}
+
+
+	/* Deallocate memory for cfg object before returning */
+	config_destroy(cfg);
 
 	return 0;	
 }

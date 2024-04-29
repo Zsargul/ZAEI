@@ -29,6 +29,7 @@ int main(int argc, char **argv) {
 	/* Setup DWM */
 	setup_dwm(config->dwm_git_url, config->dwm_dir);
 
+
 	return EXIT_SUCCESS;
 }
 
