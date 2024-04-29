@@ -56,6 +56,20 @@ int init_config(Config* config) {
 		fprintf(stderr, "Unable to find 'dwmblocks_git_url' value in %s\n", CONFIG_FILE);
 	}
 
+	/* Get DWM install directory */
+	if (config_lookup_string(&cfg, "dwm_dir", &config->dwm_dir)) {
+		dbg_fprintf(stdout, "Config - Found dwm_dir: %s\n", config->dwm_dir);
+	} else {
+		fprintf(stderr, "Unable to find 'dwm_dir' value in %s\n", CONFIG_FILE);
+	}
+
+	/* Get DWM blocks install directory */
+	if (config_lookup_string(&cfg, "dwmblocks_dir", &config->dwmblocks_dir)) {
+		dbg_fprintf(stdout, "Config - Found dwmblocks_dir: %s\n", config->dwmblocks_dir);
+	} else {
+		fprintf(stderr, "Unable to find 'dwmblocks_dir' value in %s\n", CONFIG_FILE);
+	}
+
 	return 0;	
 }
 

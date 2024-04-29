@@ -10,6 +10,8 @@ typedef struct Config {
 	const char* packages_csv_path;
 	const char* dwm_git_url;
 	const char* dwmblocks_git_url;
+	const char* dwm_dir;
+	const char* dwmblocks_dir;
 } Config;
 
 int init_config(Config* config);

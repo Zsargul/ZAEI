@@ -25,7 +25,7 @@ int setup_dwm(const char* repoUrl, const char* destPath) {
 int dwm_clone_git(const char* repoUrl, const char* targetDir) {
 	char command[MAX_STR_LEN];
 
-	/* Check if git is installed here */
+	/* Check if git is installed */
 	if (git_installed() != 0) {
 		fprintf(stderr, "Git is not installed/configured correctly on your system. Please install git before running this tool with any git-related flags.\n");
 		exit(EXIT_FAILURE);
@@ -47,9 +47,9 @@ int dwm_clone_git(const char* repoUrl, const char* targetDir) {
 	int ret = system(command);
 
 	if (ret == 0) {
-		fprintf(stdout, "DWM repository successfully cloned\n");
+		fprintf(stdout, "DWM repository successfully cloned.\n");
 	} else {
-		fprintf(stderr, "Unable to clone DWM repository. Exiting\n");
+		fprintf(stderr, "Unable to clone DWM repository. Exiting...\n");
 		exit(EXIT_FAILURE);
 	}
 
