@@ -19,6 +19,12 @@ int init_config(Config* config) {
 		return -1;
 	}
 
+	/* TODO: Make some of these options (like dwm/dwmblocks) optional, i.e, let them be commented out
+	 * and don't exit with failure if they are missing:
+	 * NOTE: Will need to use extra intermediate variables to store values and check if they even exist. If a value
+	 * is commented out for example, it should be set to NULL in the Config struct. It should later be checked if that
+	 * value is NULL before actually doing any setup with it.
+	 * */
 	/* Get AUR helper */
 	if (config_lookup_string(&cfg, "aur_helper", &config->aur_helper)) {
 		dbg_fprintf(stdout, "Config - Found aur_helper: %s\n", config->aur_helper);
@@ -41,6 +47,13 @@ int init_config(Config* config) {
 	} else {
 		fprintf(stderr, "Unable to find 'dwm_git_url' value in %s!\n", CONFIG_FILE);
 		return -1;
+	}
+
+	/* Get DWM blocks git URL */
+	if (config_lookup_string(&cfg, "dwmblocks_git_url", &config->dwmblocks_git_url)) {
+		dbg_fprintf(stdout, "Config - Found dwmblocks_git_url: %s\n", config->dwmblocks_git_url);
+	} else {
+		fprintf(stderr, "Unable to find 'dwmblocks_git_url' value in %s\n", CONFIG_FILE);
 	}
 
 	return 0;	

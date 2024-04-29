@@ -9,6 +9,7 @@ typedef struct Config {
 	const char* aur_helper;
 	const char* packages_csv_path;
 	const char* dwm_git_url;
+	const char* dwmblocks_git_url;
 } Config;
 
 int init_config(Config* config);
