@@ -13,6 +13,11 @@
 int main(int argc, char **argv) {
 	Config* config = (Config*)malloc(sizeof(Config));
 
+	if (opt_handler(argc, argv) != 0) {
+		fprintf(stderr, "Error parsing command line options\n");
+		exit(EXIT_FAILURE);
+	}
+
 	if (init_config(config) != 0) {
 		free(config);
 		fprintf(stderr, "Exiting...\n");
