@@ -14,6 +14,7 @@ int main(int argc, char **argv) {
 
 	if (init_config(config) != 0) {
 		free(config);
+		fprintf(stderr, "Exiting...\n");
 		return EXIT_FAILURE;
 	}
 

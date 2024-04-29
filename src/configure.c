@@ -21,19 +21,35 @@ int init_config(int argc, char **argv, Config* config) {
 
 	/* Get AUR helper */
 	if (config_lookup_string(&cfg, "aur_helper", &config->aur_helper)) {
-		printf("found aur_helper: %s\n", config->aur_helper);
+		dbg_fprintf(stdout, "Config - Found aur_helper: %s\n", config->aur_helper);
+	} else {
+		fprintf(stderr, "Unable to find 'aur_helper' value in %s!\n", CONFIG_FILE);
+		return -1;
+	}
+	
+	/* Get packages .csv file */
+	if (config_lookup_string(&cfg, "packages_file", &config->packages_file)) { 
+		dbg_fprintf(stdout, "Config - Found packages_file: %s\n", &config->packages_file);
+	} else {
+		fprintf(stderr, "Unable to find 'packages_file' value in %s!\n", CONFIG_FILE);
+		return -1;
 	}
 
-	if (config_lookup_string(&cfg, "packages_file", &config->packages_file)) {
-		dprintf("Config:
+	/* Get DWM git URL */
+	if (config_lookup_string(&cfg, "dwm_git_url", &config->dwm_git_url)) {
+		dgb_fprintf(stdout, "Config - Found dwm_git_url: %s\n", &config->dwm_git_url);
+	} else {
+		fprintf(stderr, "Unable to find 'dwm_git_url' value in %s!\n", CONFIG_FILE);
+		return -1;
 	}
+
+	
 
 	
 }
 
-/* Used to parse arguments and other configurations. Essentially just
- * opt handling but off-loaded from main. */
-int init_config_old(int argc, char **argv) {
+/* Parse any command line options. */
+int opt_handler(int argc, char **argv) {
 	char* name = argv[0];
 	int opt;
 	
