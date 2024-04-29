@@ -12,7 +12,7 @@ Config config;
 
 /* Used to parse arguments and other configurations. Essentially just
  * opt handling but off-loaded from main. */
-int init_config(int argc, char **argv) {
+int init_config_old(int argc, char **argv) {
 	char* name = argv[0];
 	int opt;
 	

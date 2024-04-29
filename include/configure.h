@@ -11,6 +11,6 @@ typedef struct Config {
 
 } Config;
 
-int init_config(int argc, char **argv);
+int init_config_old(int argc, char **argv);
 
 #endif
