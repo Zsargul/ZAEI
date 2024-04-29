@@ -15,7 +15,7 @@ int init_config(Config* config) {
 
 	if (config_read_file(&cfg, CONFIG_FILE) != CONFIG_TRUE) {
 		fprintf(stderr, "Libconfig error: %s:%d - %s\n", config_error_file(&cfg), 
-				config_error_text(&cfg), config_error_text(&cfg));
+				config_error_line(&cfg), config_error_text(&cfg));
 		return -1;
 	}
 
@@ -27,9 +27,9 @@ int init_config(Config* config) {
 		return -1;
 	}
 	
-	/* Get packages .csv file */
-	if (config_lookup_string(&cfg, "packages_file", &config->packages_file)) { 
-		dbg_fprintf(stdout, "Config - Found packages_file: %s\n", &config->packages_file);
+	/* Get path to packages .csv file */
+	if (config_lookup_string(&cfg, "packages_file", &config->packages_csv_path)) { 
+		dbg_fprintf(stdout, "Config - Found packages_csv_path: %s\n", &config->packages_csv_path);
 	} else {
 		fprintf(stderr, "Unable to find 'packages_file' value in %s!\n", CONFIG_FILE);
 		return -1;
@@ -37,15 +37,13 @@ int init_config(Config* config) {
 
 	/* Get DWM git URL */
 	if (config_lookup_string(&cfg, "dwm_git_url", &config->dwm_git_url)) {
-		dgb_fprintf(stdout, "Config - Found dwm_git_url: %s\n", &config->dwm_git_url);
+		dbg_fprintf(stdout, "Config - Found dwm_git_url: %s\n", &config->dwm_git_url);
 	} else {
 		fprintf(stderr, "Unable to find 'dwm_git_url' value in %s!\n", CONFIG_FILE);
 		return -1;
 	}
 
-	
-
-	
+	return 0;	
 }
 
 /* Parse any command line options. */

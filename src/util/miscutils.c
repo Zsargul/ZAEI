@@ -7,6 +7,8 @@
 
 #include "util/miscutils.h"
 
+static int debugMode = 0;
+
 /* mkdir, but return successfully if the directory already exists */
 static int mkdir_ifn_exists(const char* dir, mode_t mode) {
 	struct stat st;
@@ -83,7 +85,7 @@ void enable_debug_mode() {
 
 /* Wrapper for fprintf for debugging */
 int dbg_fprintf(FILE *stream, const char *format, ...) {
-	if (!DEBUG)
+	if (!debugMode)
 		return 0;
 
 	va_list arg;

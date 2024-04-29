@@ -7,7 +7,7 @@
  * actions accordingly. */
 typedef struct Config {
 	const char* aur_helper;
-	const char* package_csv_path;
+	const char* packages_csv_path;
 	const char* dwm_git_url;
 } Config;
 
