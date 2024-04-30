@@ -11,32 +11,48 @@ int install_dwm(const char* repoUrl, const char* targetDir) {
 
 	/* Check if repo exists */
 	if (repo_exists(repoUrl)) {
-		fprintf(stdout, "Specified Git repository exists. Cloning...\n");
+		fprintf(stdout, "Dwm: specified git repository exists. Cloning...\n");
 	} else {
-		fprintf(stdout, "Specified Get repository with URL \"%s\" does not exist! Exiting.\n", repoUrl);
+		fprintf(stdout, "Dwm: specified git repository with URL \"%s\" does not exist! Exiting.\n", repoUrl);
 		exit(EXIT_FAILURE);
 	}
 
-	dwm_clone_git(repoUrl, targetDir);
+	clone_repo("Dwm", repoUrl, targetDir);
 
 	return 0;	
 }
 
-int clone_dwm_git(const char* repoUrl, const char* targetDir) {
+int install_dwmblocks(const char* repoUrl, const char* targetDir) {
+	char fullPath[MAX_STR_LEN];
+
+	/* Check if repo exists */
+	if (repo_exists(repoUrl)) {
+		fprintf(stdout, "Dwmblocks: specified git repository exists. Cloning...\n");
+	} else {
+		fprintf(stderr, "Dwmblocks: specified git repository with URL \"%s\" does not exist! Exiting.\n", repoUrl);
+		exit(EXIT_FAILURE);
+	}
+
+	clone_repo("Dwmblocks", repoUrl, targetDir);
+
+	return 0;
+}
+
+int clone_repo(const char* name, const char* repoUrl, const char* targetDir) {
 	char command[MAX_STR_LEN];
 
 	/* Check if git is installed */
 	if (git_installed() != 0) {
-		fprintf(stderr, "Git is not installed/configured correctly on your system. Please install git before running this tool with any git-related flags.\n");
+		fprintf(stderr, "Git is not installed/configured correctly on your system. Please install git before running this tool with any git repositories specified in the config.\n");
 		exit(EXIT_FAILURE);
 	}
 
 	/* Create specified directory if it does not exist */
 	struct stat st;
 	if (stat(targetDir, &st) != 0) {
-		fprintf(stdout, "Directory %s does not exist. Creating it...\n", targetDir);
+		fprintf(stdout, "%s: Directory %s does not exist. Creating it...\n", name, targetDir);
 		if (_mkdir(targetDir) != 0) {
-			fprintf(stderr, "Error creating directory %s. Exiting...\n", targetDir);
+			fprintf(stderr, "%s: Error creating directory %s. Exiting...\n", name, targetDir);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -47,9 +63,9 @@ int clone_dwm_git(const char* repoUrl, const char* targetDir) {
 	int ret = system(command);
 
 	if (ret == 0) {
-		fprintf(stdout, "DWM repository successfully cloned.\n");
+		fprintf(stdout, "%s: Repository successfully cloned.\n", name);
 	} else {
-		fprintf(stderr, "Unable to clone DWM repository. Exiting...\n");
+		fprintf(stderr, "%s: Unable to clone repository. Exiting...\n", name);
 		exit(EXIT_FAILURE);
 	}
 
