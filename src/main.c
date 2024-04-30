@@ -8,6 +8,7 @@
 #include "util/miscutils.h"
 #include "configure.h"
 #include "packages.h"
+#include "wm_setup.h"
 
 /* TODO: Include libonfig system path in makefile instead of just copying the header into include/. Same
  * goes for .a library */

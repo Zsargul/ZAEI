@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 
-#include "dwm_setup.h"
+#include "wm_setup.h"
 #include "constants.h"
 #include "util/miscutils.h"
 
-int setup_dwm(const char* repoUrl, const char* destPath) {
+int install_dwm(const char* repoUrl, const char* targetDir) {
 	char fullPath[MAX_STR_LEN];
 
 	/* Check if repo exists */
@@ -17,12 +17,12 @@ int setup_dwm(const char* repoUrl, const char* destPath) {
 		exit(EXIT_FAILURE);
 	}
 
-	dwm_clone_git(repoUrl, destPath);
+	dwm_clone_git(repoUrl, targetDir);
 
 	return 0;	
 }
 
-int dwm_clone_git(const char* repoUrl, const char* targetDir) {
+int clone_dwm_git(const char* repoUrl, const char* targetDir) {
 	char command[MAX_STR_LEN];
 
 	/* Check if git is installed */
