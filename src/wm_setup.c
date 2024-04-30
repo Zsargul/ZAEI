@@ -23,8 +23,6 @@ int install_dwm(const char* repoUrl, const char* targetDir) {
 }
 
 int install_dwmblocks(const char* repoUrl, const char* targetDir) {
-	char fullPath[MAX_STR_LEN];
-
 	/* Check if repo exists */
 	if (repo_exists(repoUrl)) {
 		fprintf(stdout, "Dwmblocks: specified git repository exists. Cloning...\n");
@@ -33,14 +31,13 @@ int install_dwmblocks(const char* repoUrl, const char* targetDir) {
 		exit(EXIT_FAILURE);
 	}
 
+	/* TODO: Get name of git repo and use it to double check that it is not empty using dir_not_empty */
 	clone_repo("Dwmblocks", repoUrl, targetDir);
 
 	return 0;
 }
 
 int clone_repo(const char* name, const char* repoUrl, const char* targetDir) {
-	char command[MAX_STR_LEN];
-
 	/* Check if git is installed */
 	if (git_installed() != 0) {
 		fprintf(stderr, "Git is not installed/configured correctly on your system. Please install git before running this tool with any git repositories specified in the config.\n");

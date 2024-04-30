@@ -10,6 +10,10 @@
 #include "packages.h"
 #include "wm_setup.h"
 
+/* TODO: Refactor so that most functions, except ones in main and maybe wm_setup, don't print any output, but rather
+ * just return values. These values should then be used to print appropriate info/errors in main, rather than having
+ * them randomly littered all over helper functions */
+
 /* TODO: Include libonfig system path in makefile instead of just copying the header into include/. Same
  * goes for .a library */
 int main(int argc, char **argv) {
@@ -19,7 +23,7 @@ int main(int argc, char **argv) {
 
 	if (init_config(config) != 0) {
 		free(config);
-		fprintf(stderr, "Exiting...\n");
+		fprintf(stderr, "Exiting.\n");
 		return EXIT_FAILURE;
 	}
 
