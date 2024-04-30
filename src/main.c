@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
 
 	/* TODO this is an optional config element. check if it exists before setting it up */
 	/* Setup DWM */
-	setup_dwm(config->dwm_git_url, config->dwm_dir);
+	install_dwm(config->dwm_git_url, config->dwm_dir);
 
 
 	return EXIT_SUCCESS;

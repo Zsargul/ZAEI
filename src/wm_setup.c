@@ -7,8 +7,6 @@
 #include "util/miscutils.h"
 
 int install_dwm(const char* repoUrl, const char* targetDir) {
-	char fullPath[MAX_STR_LEN];
-
 	/* Check if repo exists */
 	if (repo_exists(repoUrl)) {
 		fprintf(stdout, "Dwm: specified git repository exists. Cloning...\n");
@@ -55,6 +53,7 @@ int clone_repo(const char* name, const char* repoUrl, const char* targetDir) {
 	}
 
 	/* Download repo */
+	char command[MAX_STR_LEN];
 	snprintf(command, sizeof(command), "git clone %s %s", repoUrl, targetDir);
 	/* TODO: Change this to a fork()/exec() call */
 	int ret = system(command);

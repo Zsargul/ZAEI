@@ -111,8 +111,8 @@ int dir_not_empty(const char* dirname) {
 	int n = 0;
 	struct dirent *d;
 
-	DIR *dir == opendir(dirname); /* Not a directory or does not exist */
-	if (dir == NULL)
+	DIR *dir = opendir(dirname); 
+	if (dir == NULL) /* Not a directory or does not exist */
 		return 1;
 
 	while ((d = readdir(dir)) != NULL) {

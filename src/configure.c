@@ -62,18 +62,18 @@ int init_config(Config* config) {
 
 	/* [OPTIONAL] Get DWM install directory */
 	if (config_lookup_string(&cfg, "dwm_dir", &config->dwm_dir)) {
-		if (dwm_git_url == NULL) {
+		if (config->dwm_git_url == NULL) {
 			fprintf(stdout, "WARNING: Found target directory for DWM installation in config file, but the variable 'dwm_git_url' is not set. Will not proceed with DWM installation.\n");
 		} else {
 			dbg_fprintf(stdout, "Config - Found dwm_dir: %s\n", config->dwm_dir);
 		}
 	} else {
-		fprintf(stdpit, "Didn't find 'dwm_dir' value in config file. Skipping...\n");
+		fprintf(stdout, "Didn't find 'dwm_dir' value in config file. Skipping...\n");
 	}
 
 	/* [OPTIONAL] Get DWM blocks install directory */
 	if (config_lookup_string(&cfg, "dwmblocks_dir", &config->dwmblocks_dir)) {
-		if (config->dwmblocks_url == NULL) {
+		if (config->dwmblocks_git_url == NULL) {
 			fprintf(stdout, "WARNING: Found target directory for DWMblocks installation in config file, but the variable 'dwmblocks_git_url' is not set. Will not proceed with DWMblocks installation.\n");
 		} else {
 			dbg_fprintf(stdout, "Config - Found dwmblocks_dir: %s\n", config->dwmblocks_dir);
@@ -84,7 +84,7 @@ int init_config(Config* config) {
 
 
 	/* Deallocate memory for cfg object before returning */
-	config_destroy(cfg);
+	config_destroy(&cfg);
 
 	return 0;	
 }
