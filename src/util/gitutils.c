@@ -1,6 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
 
+#include "constants.h"
 #include "util/gitutils.h"
+#include "util/miscutils.h"
 
 /* TODO: Change system() to fork()/exec() */
 /* Returns 0 if git is installed. */

@@ -7,14 +7,14 @@ OBJ_DIR := obj
 BIN_DIR := bin
 LIB_DIR := lib
 SUB_DIRS := util
-INCLUDE_DIR := include
-LIB_INCLUDES := $(INCLUDE_DIR)/libs
+INCLUDE_DIR := include # Project headers
+INCLUDE_LIBS := /usr/include # External library headers
 
 # Final binary
 TARGET := $(BIN_DIR)/zaei
 
 # Flags (Libraries and includes blank for now)
-CFLAGS := -g -Wall -O2 -I$(LIB_INCLUDES) -I$(INCLUDE_DIR)
+CFLAGS := -g -Wall -O2 -I$(INCLUDE_DIR) -I$(INCLUDE_LIBS)
 
 # ----------------------------
 # Compile and link into binary

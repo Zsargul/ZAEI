@@ -14,8 +14,9 @@
  * just return values. These values should then be used to print appropriate info/errors in main, rather than having
  * them randomly littered all over helper functions */
 
-/* TODO: Include libonfig system path in makefile instead of just copying the header into include/. Same
- * goes for .a library */
+/* TODO: Header file for libconfig is in /usr/include. This is included in the makefile.
+ * Now all thats left is statically linking libconfig.a without having to keep the .a file in
+ * the local project directory. find out how to do this. */
 int main(int argc, char **argv) {
 	opt_handler(argc, argv);
 
