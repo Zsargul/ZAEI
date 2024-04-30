@@ -10,7 +10,11 @@
 
 static int debugMode = 0;
 
-/* mkdir, but return successfully if the directory already exists */
+/* Helper for _mkdir.
+ * Return values:
+ * 0: Directory was created successfully or already exists
+ * 1: Directory could not be created
+ */
 static int mkdir_ifn_exists(const char* dir, mode_t mode) {
 	struct stat st;
 	errno = 0;
@@ -20,26 +24,31 @@ static int mkdir_ifn_exists(const char* dir, mode_t mode) {
 
 	/* If it fails for any reason other than the directory already existing, return failure */
 	if (errno != EEXIST)
-		return -1;
+		return 1;
 
 	/* Check if the existing path exists */
 	if (stat(dir, &st) != 0)
-		return -1;
+		return 1;
 
 	/* If it does not, fail with ENOTDIR */
 	if (!S_ISDIR(st.st_mode)) {
 		errno = ENOTDIR;
-		return -1;
+		return 1;
 	}
 
 	errno = 0;
 	return 0;
 }
 
+/* mkdir, but return successfully if the directory already exists..
+ * Return values:
+ * 0: Directory was created or exists already
+ * 1: Failure creating the directory
+ */
 int _mkdir(const char* dirPath) {
 	char *_path = NULL;
 	char *p;
-	int ret = -1;
+	int ret = 1;
 	mode_t mode = 0755; /* rwx r-x r-x */
 
 	errno = 0;
@@ -100,6 +109,7 @@ int dbg_fprintf(FILE *stream, const char *format, ...) {
 }
 
 /* TODO: Change system() to fork()/exec() */
+/* Returns 0 if git is installed. */
 int git_installed() {
 	if (system("git --version") != 0)
 		return 1;
@@ -107,6 +117,7 @@ int git_installed() {
 	return 0;
 }
 
+/* Returns 0 if directory is not empty */
 int dir_not_empty(const char* dirname) {
 	int n = 0;
 	struct dirent *d;
