@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <stdarg.h>
+#include <dirent.h>
 
 #include "util/miscutils.h"
 
@@ -104,6 +105,26 @@ int git_installed() {
 		return 1;
 
 	return 0;
+}
+
+int dir_not_empty(const char* dirname) {
+	int n = 0;
+	struct dirent *d;
+
+	DIR *dir == opendir(dirname); /* Not a directory or does not exist */
+	if (dir == NULL)
+		return 1;
+
+	while ((d = readdir(dir)) != NULL) {
+		if (++n > 2)
+			break;
+	}
+	closedir(dir);
+
+	if (n <= 2) /* Empty */
+		return 1;
+	else
+		return 0;
 }
 
 void err_usage(char* progName, char* errStr) {
