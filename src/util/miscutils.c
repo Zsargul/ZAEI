@@ -108,15 +108,6 @@ int dbg_fprintf(FILE *stream, const char *format, ...) {
 	return done;
 }
 
-/* TODO: Change system() to fork()/exec() */
-/* Returns 0 if git is installed. */
-int git_installed() {
-	if (system("git --version") != 0)
-		return 1;
-
-	return 0;
-}
-
 /* Returns 0 if directory is not empty */
 int dir_not_empty(const char* dirname) {
 	int n = 0;
