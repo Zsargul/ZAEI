@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
 	}
 
 	/* Install all packages first */
-	if (install_packages(config->packages_csv_path) == -1) {
+	if (install_packages(config->packages_csv_path) == -1)
 		exit(EXIT_FAILURE);
 
 
