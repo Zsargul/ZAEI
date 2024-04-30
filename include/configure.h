@@ -15,6 +15,6 @@ typedef struct Config {
 } Config;
 
 int init_config(Config* config);
-int opt_handler(int argc, char **argv);
+void opt_handler(int argc, char **argv);
 
 #endif

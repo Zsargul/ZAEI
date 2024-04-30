@@ -9,14 +9,21 @@
 #include "util/miscutils.h"
 #include "configure.h"
 
+/* Returns values:
+ * -1: Critical error
+ *  0: No errors/warnings
+ */
 int init_config(Config* config) {
+	int ret = 0;
+
 	config_t cfg;
 	config_init(&cfg);
 
 	if (config_read_file(&cfg, CONFIG_FILE) != CONFIG_TRUE) {
-		fprintf(stderr, "Libconfig error: %s:%d - %s\n", config_error_file(&cfg), 
+		fprintf(stderr, "%s: Libconfig error: %s:%d - %s\n", CRIT, config_error_file(&cfg), 
 				config_error_line(&cfg), config_error_text(&cfg));
-		return -1;
+		ret = -1;
+		return ret;
 	}
 
 	/* TODO: Make some of these options (like dwm/dwmblocks) optional, i.e, let them be commented out
@@ -28,69 +35,62 @@ int init_config(Config* config) {
 
 	/* Get AUR helper */
 	if (config_lookup_string(&cfg, "aur_helper", &config->aur_helper)) {
-		dbg_fprintf(stdout, "Config - Found aur_helper: %s\n", config->aur_helper);
+		dbg_fprintf(stdout, "%s: Config - Found aur_helper: %s\n", INFO, config->aur_helper);
 	} else {
-		fprintf(stderr, "Unable to find 'aur_helper' value in %s!\n", CONFIG_FILE);
-		return -1;
+		fprintf(stderr, "%s: Unable to find 'aur_helper' value in %s!\n", CRIT, CONFIG_FILE);
+		ret = -1;
+		return ret;
 	}
 	
 	/* TODO: Clean up the output messages below */
 
 	/* Get path to packages .csv file */
 	if (config_lookup_string(&cfg, "packages_csv_path", &config->packages_csv_path)) { 
-		dbg_fprintf(stdout, "Config - Found packages_csv_path: %s\n", config->packages_csv_path);
+		dbg_fprintf(stdout, "%s: Config - Found packages_csv_path: %s\n", INFO, config->packages_csv_path);
 	} else {
-		fprintf(stderr, "Unable to find 'packages_file' field in config file!\n");
-		return -1;
+		fprintf(stderr, "%s: Unable to find 'packages_file' field in config file!\n", CRIT);
+		ret = -1;
+		return ret;
 	}
 
 	/* [OPTIONAL]  Get DWM git URL */
 	if (config_lookup_string(&cfg, "dwm_git_url", &config->dwm_git_url)) {
-		dbg_fprintf(stdout, "Config - Found dwm_git_url: %s\n", config->dwm_git_url);
+		dbg_fprintf(stdout, "%s: Config - Found dwm_git_url: %s\n", INFO, config->dwm_git_url);
 	} else {
-		fprintf(stderr, "Didn't find field 'dwm_git_url' in config file. Skipping...\n");
+		fprintf(stderr, "%s: Didn't find field 'dwm_git_url' in config file. Skipping...\n", INFO);
 		config->dwm_git_url = NULL;
 	}
 
 	/* [OPTIONAL] Get DWM blocks git URL */
 	if (config_lookup_string(&cfg, "dwmblocks_git_url", &config->dwmblocks_git_url)) {
-		dbg_fprintf(stdout, "Config - Found dwmblocks_git_url: %s\n", config->dwmblocks_git_url);
+		dbg_fprintf(stdout, "%s: Config - Found dwmblocks_git_url: %s\n", INFO, config->dwmblocks_git_url);
 	} else {
-		fprintf(stdout, "Didn't find field 'dwmblocks_git_url' in config file. Skipping...\n");
+		fprintf(stdout, "%s: Didn't find field 'dwmblocks_git_url' in config file. Skipping...\n", INFO);
 		config->dwmblocks_git_url = NULL;
 	}
 
 	/* [OPTIONAL] Get DWM install directory */
 	if (config_lookup_string(&cfg, "dwm_dir", &config->dwm_dir)) {
-		if (config->dwm_git_url == NULL) {
-			fprintf(stdout, "WARNING: Found target directory for DWM installation in config file, but the variable 'dwm_git_url' is not set. Will not proceed with DWM installation.\n");
-		} else {
-			dbg_fprintf(stdout, "Config - Found dwm_dir: %s\n", config->dwm_dir);
-		}
+		dbg_fprintf(stdout, "%s: Config - Found dwm_dir: %s\n", INFO, config->dwm_dir);
 	} else {
-		fprintf(stdout, "Didn't find 'dwm_dir' value in config file. Skipping...\n");
+		fprintf(stdout, "%s: Didn't find 'dwm_dir' value in config file. Skipping...\n", INFO);
 	}
 
 	/* [OPTIONAL] Get DWM blocks install directory */
 	if (config_lookup_string(&cfg, "dwmblocks_dir", &config->dwmblocks_dir)) {
-		if (config->dwmblocks_git_url == NULL) {
-			fprintf(stdout, "WARNING: Found target directory for DWMblocks installation in config file, but the variable 'dwmblocks_git_url' is not set. Will not proceed with DWMblocks installation.\n");
-		} else {
-			dbg_fprintf(stdout, "Config - Found dwmblocks_dir: %s\n", config->dwmblocks_dir);
-		}
+		dbg_fprintf(stdout, "%s: Config - Found dwmblocks_dir: %s\n", INFO, config->dwmblocks_dir);
 	} else {
-		fprintf(stdout, "Didn't find 'dwmblocks_dir' value in config file. Skipping...\n");
+		fprintf(stdout, "%s: Didn't find 'dwmblocks_dir' value in config file. Skipping...\n", CRIT);
 	}
-
 
 	/* Deallocate memory for cfg object before returning */
 	config_destroy(&cfg);
 
-	return 0;	
+	return ret;	
 }
 
 /* Parse any command line options. */
-int opt_handler(int argc, char **argv) {
+void opt_handler(int argc, char **argv) {
 	char* name = argv[0];
 	int opt;
 
@@ -129,6 +129,4 @@ int opt_handler(int argc, char **argv) {
 	for (int i = optind; i < argc; ++i) {
 		/* Skip over any non-option arguments */
 	}
-
-	return 0;
 }

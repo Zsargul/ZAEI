@@ -10,20 +10,24 @@
 #include "util/parsecsv.h"
 
 /* TODO: Stick to one naming convention for variables for christ's sake */
+/* Return values:
+ * -1: Critical error
+ *  Other: Number of installed packages
+ */
 int install_packages(const char* pkgsListFile) {
 	int packageCount = csv_lines(pkgsListFile);
 	if (packageCount == -1)
-		exit(EXIT_FAILURE);
+		return -1;
 
 	Package pkgs[packageCount]; /* Array of packages to install */
 
 	if (packageCount != (sizeof(pkgs) / sizeof(pkgs[0]))) {
-		fprintf(stderr, "Error creating pkgs array. Exiting.\n");
-		exit(EXIT_FAILURE);
+		fprintf(stderr, "%s: Error creating pkgs array. Exiting.\n", CRIT);
+		return -1;
 	}
 
-	if (parse_package_list(pkgsListFile, pkgs, packageCount) == -1)
-		exit(EXIT_FAILURE);
+	if (parse_package_list(pkgsListFile, pkgs, packageCount) != 0)
+		return -1;
 
 	int successfulInstalls = 0;
 	int officialPkgsCount = 0;
@@ -40,7 +44,7 @@ int install_packages(const char* pkgsListFile) {
 			fprintf(stderr, "%ld: Package %s, was not installed successfully, but it is not required.\n", i, *(pkgs[i].name));
 		} else if (ret != 0 && !(pkgPtr->req)) {
 			fprintf(stderr, "%ld: REQUIRED Package %s, was not installed successfully. Exiting.\n", i, *(pkgs[i].name));
-			exit(EXIT_FAILURE);
+			return -1;
 		} else {
 			fprintf(stdout, "%ld: %s installed successfully\n", i, *(pkgs[i].name));
 
@@ -58,7 +62,7 @@ int install_packages(const char* pkgsListFile) {
 			officialPkgsCount,
 			aurPkgsCount);
 
-	return 0;
+	return successfulInstalls;
 }
 
 int install_package(Package *pkg) {

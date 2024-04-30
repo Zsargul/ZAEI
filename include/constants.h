@@ -7,8 +7,8 @@
 #define CONFIG_FILE "zaei.conf"
 
 /* Error strings */
-#define WARN "Warning: "
-#define CRIT "Critical Error: "
-#define INFO "Info: "
+#define WARN "WARNING"
+#define CRIT "CRITICAL ERROR"
+#define INFO "INFO"
 
 #endif

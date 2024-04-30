@@ -33,11 +33,15 @@ int csv_lines(const char* filename) {
 	return lineCount;
 }
 
+/* Return values:
+ * 1: Critical error
+ * 0: Success
+ */
 int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 	FILE *fp = fopen(filename, "r");
 	if (fp == NULL) {
 		fprintf(stderr, "Error opening file %s", filename);
-		exit(EXIT_FAILURE);
+		return 1;
 	}
 
 	/* Get header fields */
@@ -45,11 +49,11 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 	char header[MAX_STR_LEN];
 	if (fgets(header, sizeof(header), fp) == NULL) {
 		fclose(fp);
-		return -1; /* Error reading header */
+		return 1; /* Error reading header */
 	} else {
 		if (CSV_FIELDS != (sizeof(fields) / sizeof(fields[0]))) {
 			fprintf(stderr, "fields[] array is not the same size as the amount of fields in %s\n", filename);
-			exit(EXIT_FAILURE);
+			return 1;
 		}
 
 		for (size_t i = 0; i < (sizeof(fields) / sizeof(fields[0])); i++)
@@ -69,7 +73,7 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 		name = get_field(tmp, 0);
 		if (name == NULL) {
 			fprintf(stderr, "Error parsing csv. Value in field '%s' is null.", fields[0]);
-			exit(EXIT_FAILURE);
+			return 1;
 		}
 
 		const char* reqField = get_field(tmp, 1);
@@ -82,7 +86,7 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 			req = 0;
 		} else {
 			fprintf(stderr, "Unknown value encountered in csv field %d (%s)", 1, fields[1]);
-			exit(EXIT_FAILURE);
+			return 1;
 		}
 
 		/* Get 2nd field */
@@ -92,7 +96,7 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 			onAur = 0;
 		} else {
 			fprintf(stderr, "Unknown value encountered in csv field %d (%s)", 2, fields[2]);
-			exit(EXIT_FAILURE);
+			return 1;
 		}
 		
 		/* Create new package as struct and add to array */
