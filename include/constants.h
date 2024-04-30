@@ -6,4 +6,9 @@
 #define CSV_FIELDS 3
 #define CONFIG_FILE "zaei.conf"
 
+/* Error strings */
+#define WARN "Warning: "
+#define CRIT "Critical Error: "
+#define INFO "Info: "
+
 #endif
