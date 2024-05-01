@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	} else {
 		dbg_fprintf(stdout, "Using Libconfig version: %s\n", libconfigVer);
-		free(libconfingVer);
+		free(libconfigVer);
 	}
 
 	opt_handler(argc, argv);
