@@ -5,15 +5,17 @@ CC := gcc
 SRC_DIR := src
 OBJ_DIR := obj
 BIN_DIR := bin
-LIB_DIR := lib
 SUB_DIRS := util
-INCLUDE_DIR := include # Project headers
-INCLUDE_LIBS := /usr/include # External library headers
+INCLUDE_DIR := include
+
+# Libconfig is searched for here
+LIB_DIR := /usr/lib:/usr/local/lib
+INCLUDE_LIBS := /usr/include:/usr/local/include
 
 # Final binary
 TARGET := $(BIN_DIR)/zaei
 
-# Flags (Libraries and includes blank for now)
+# Flags
 CFLAGS := -g -Wall -O2 -I$(INCLUDE_DIR) -I$(INCLUDE_LIBS)
 
 # ----------------------------
@@ -21,7 +23,7 @@ CFLAGS := -g -Wall -O2 -I$(INCLUDE_DIR) -I$(INCLUDE_LIBS)
 # ----------------------------
 SOURCES := $(shell find $(SRC_DIR) -name "*.c")
 OBJECTS := $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
-LIBS := -L$(LIB_DIR) -lconfig
+LIBS := -L$(LIB_DIR) -lconfig -static
 
 # Default target
 all: $(TARGET)

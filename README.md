@@ -21,5 +21,6 @@ cd libconfig-1.7.3
 ./configure
 make
 make install
-
 ```
+
+The library files will be installed into `/usr/local/lib`.
