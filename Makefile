@@ -8,9 +8,9 @@ BIN_DIR := bin
 SUB_DIRS := util
 INCLUDE_DIR := include
 
-# Libconfig is searched for here
-LIB_DIR := /usr/lib:/usr/local/lib
-INCLUDE_LIBS := /usr/include:/usr/local/include
+# Search /usr/local/ first for libconfig as that's where the manual build is
+LIB_DIR := /usr/local/lib:/usr/lib
+INCLUDE_LIBS := /usr/local/include:/usr/include
 
 # Final binary
 TARGET := $(BIN_DIR)/zaei
