@@ -7,5 +7,6 @@ int dbg_fprintf(FILE *stream, const char *format, ...);
 int dir_not_empty(const char* dirname);
 void err_usage(char* progName, char* errStr);
 void usage(char* progName);
+const char* libconfig_version();
 
 #endif
