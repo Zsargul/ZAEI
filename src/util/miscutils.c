@@ -146,7 +146,7 @@ void usage(char* progName) {
 	fprintf(stdout, "Usage: %s\n\n%s", progName, helpMsg);
 }
 
-const char* libconfig_version() {
+char* libconfig_version() {
 	char* str = malloc(MAX_STR_LEN);
 	if (snprintf(str, sizeof(str), "%d.%d.%d", LIBCONFIG_VER_MAJOR,
 			LIBCONFIG_VER_MINOR, LIBCONFIG_VER_REVISION) < 0) {

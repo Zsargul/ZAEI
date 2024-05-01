@@ -19,7 +19,7 @@
  * Now all thats left is statically linking libconfig.a without having to keep the .a file in
  * the local project directory. find out how to do this. */
 int main(int argc, char **argv) {
-	const char* libconfigVer = libconfig_version();
+	char* libconfigVer = libconfig_version();
 	if (libconfigVer == NULL) {
 		fprintf(stderr, "%s: Unable to get Libconfig version!\n", CRIT);
 		exit(EXIT_FAILURE);
