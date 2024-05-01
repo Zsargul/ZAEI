@@ -22,8 +22,10 @@ int main(int argc, char **argv) {
 	const char* libconfigVer = libconfig_version();
 	if (libconfigVer == NULL) {
 		fprintf(stderr, "%s: Unable to get Libconfig version!\n", CRIT);
+		exit(EXIT_FAILURE);
 	} else {
 		dbg_fprintf(stdout, "Using Libconfig version: %s\n", libconfigVer);
+		free(libconfingVer);
 	}
 
 	opt_handler(argc, argv);
@@ -31,9 +33,8 @@ int main(int argc, char **argv) {
 	Config* config = (Config*)malloc(sizeof(Config));
 
 	if (init_config(config) != 0) {
-		free(config);
 		fprintf(stderr, "Exiting.\n");
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 
 	/* Install all packages first */
@@ -49,8 +50,6 @@ int main(int argc, char **argv) {
 		fprintf(stderr, "Exiting.\n");
 		exit(EXIT_FAILURE);
 	}
-	
-
 
 	return EXIT_SUCCESS;
 }

@@ -6,6 +6,9 @@
 #include <stdarg.h>
 #include <dirent.h>
 
+#include <libconfig.h>
+
+#include "constants.h"
 #include "util/miscutils.h"
 
 static int debugMode = 0;
@@ -144,8 +147,8 @@ void usage(char* progName) {
 }
 
 const char* libconfig_version() {
-	const char* str[MAX_STR_LEN];
-	if (snprint(str, sizeof(str), "%d.%d.%d", LIBCONFIG_VER_MAJOR,
+	char* str = malloc(MAX_STR_LEN);
+	if (snprintf(str, sizeof(str), "%d.%d.%d", LIBCONFIG_VER_MAJOR,
 			LIBCONFIG_VER_MINOR, LIBCONFIG_VER_REVISION) < 0) {
 		return NULL;
 	}
