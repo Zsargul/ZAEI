@@ -11,18 +11,10 @@ about newer versions having problems, you can follow the instructions under ["Bu
 
 #### Building libconfig
 
-If you want to compile this from source, you will also need to get the `.a` library file for [libconfig](https://github.com/hyperrealm/libconfig), a
-statically linked dependency of ZAEI. The easiest way to do this is just install it from the package manager:
-
-#### Arch-based distros
-```
-sudo pacman -S libconfig
-```
-
-##### Debian-based distros
-```
-sudo apt install libconfig-dev
-```
+If you want to compile this from source, you will also need to build [libconfig](https://github.com/hyperrealm/libconfig), a
+statically linked dependency of ZAEI. Since it is statically linked, you _must_ build this from source in order to generate
+the `.a` file in `/usr/local/bin`. This is because, while the offical arch repositories contain the `libconfig` package,
+the package only contains dynamic `.so` libraries which go into `/usr/lib`.
 
 **NOTE:** The 
 
