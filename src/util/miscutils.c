@@ -148,7 +148,7 @@ void usage(char* progName) {
 
 char* libconfig_version() {
 	char* str = malloc(MAX_STR_LEN);
-	if (snprintf(str, sizeof(str), "%d.%d.%d", LIBCONFIG_VER_MAJOR,
+	if (snprintf(str, MAX_STR_LEN, "%d.%d.%d", LIBCONFIG_VER_MAJOR,
 			LIBCONFIG_VER_MINOR, LIBCONFIG_VER_REVISION) < 0) {
 		return NULL;
 	}

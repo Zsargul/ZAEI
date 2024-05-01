@@ -19,16 +19,16 @@
  * Now all thats left is statically linking libconfig.a without having to keep the .a file in
  * the local project directory. find out how to do this. */
 int main(int argc, char **argv) {
+	opt_handler(argc, argv);
+
 	char* libconfigVer = libconfig_version();
 	if (libconfigVer == NULL) {
 		fprintf(stderr, "%s: Unable to get Libconfig version!\n", CRIT);
 		exit(EXIT_FAILURE);
 	} else {
-		dbg_fprintf(stdout, "Using Libconfig version: %s\n", libconfigVer);
+		fprintf(stdout, "Using Libconfig version: %s\n", libconfigVer);
 		free(libconfigVer);
 	}
-
-	opt_handler(argc, argv);
 
 	Config* config = (Config*)malloc(sizeof(Config));
 
