@@ -52,6 +52,13 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
+	/* TODO this is an optional config element. check if it exists before setting it up */
+	/* Setup DWM Blocks */
+	if (install_dwmblocks(config->dwmblocks_git_url, config->dwmblocks_dir) != 0) {
+		fprintf(stderr, "Exiting.\n");
+		exit(EXIT_FAILURE);
+	}
+
 	return EXIT_SUCCESS;
 }
 
