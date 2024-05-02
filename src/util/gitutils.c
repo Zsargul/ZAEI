@@ -65,10 +65,10 @@ int clone_repo(const char* name, const char* repoUrl, const char* targetDir) {
 int repo_exists(const char* repoUrl) {
 	int ret = -1;
 
-	char cmd[MAX_STR_LEN];
 	const char* cmdArgs[] = {
-		[0] = "ls-remote",
-		[1] = repoUrl,
+		[0] = "git",
+		[1] = "ls-remote",
+		[2] = repoUrl,
 		NULL,
 	};
 
@@ -80,8 +80,7 @@ int repo_exists(const char* repoUrl) {
 			fprintf(stderr, "Could not fork new process: %s\n", strerror(forkErrno));
 			ret = -1;
 		case 0:
-			strcpy(cmd, "git");
-			const int execResult = execvp(cmd, (char **)cmdArgs);
+			const int execResult = execvp(cmdArgs[0], (char **)cmdArgs);
 
 			assert(execResult == -1);
 			int const execErrno = errno;

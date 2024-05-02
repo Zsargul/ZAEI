@@ -38,7 +38,7 @@ int csv_lines(const char* filename) {
  * 0: Success
  */
 int parse_package_list(const char* filename, Package *pkgs_array, int size) {
-	FILE *fp = fopen(filename, "r");
+	FILE* fp = fopen(filename, "r");
 	if (fp == NULL) {
 		fprintf(stderr, "Error opening file %s", filename);
 		return 1;

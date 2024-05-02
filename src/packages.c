@@ -8,6 +8,7 @@
 
 #include "packages.h"
 #include "util/parsecsv.h"
+#include "util/miscutils.h"
 
 /* TODO: Stick to one naming convention for variables for christ's sake */
 /* Return values:
@@ -19,12 +20,9 @@ int install_packages(const char* pkgsListFile) {
 	if (packageCount == -1)
 		return -1;
 
-	Package pkgs[packageCount]; /* Array of packages to install */
+	Package* pkgs = (Package*)malloc(packageCount * sizeof(Package));; /* Array of packages to install */
+	dbg_fprintf(stdout, "install_packages(): allocated memory for %d packages\n", packageCount);
 
-	if (packageCount != (sizeof(pkgs) / sizeof(pkgs[0]))) {
-		fprintf(stderr, "%s: Error creating pkgs array. Exiting.\n", CRIT);
-		return -1;
-	}
 
 	if (parse_package_list(pkgsListFile, pkgs, packageCount) != 0)
 		return -1;
@@ -66,12 +64,17 @@ int install_packages(const char* pkgsListFile) {
 }
 
 int install_package(Package *pkg) {
-	char cmd[MAX_STR_LEN];
+	/* Use AUR helper or official repos for installation */
+	/* TODO: Use config->aurhelper instead of AUR_HELPER */
+	char packageManager[MAX_STR_LEN];
+	strcpy(packageManager, pkg->onAur ? AUR_HELPER : "pacman");
+
 	const char* cmdArgs[] = { 
-		[0] = "--noconfirm", 
-		[1] = "--needed",
-		[2] = "-S",
-		[3] = NULL,
+		[0] = packageManager,
+		[1] = "--noconfirm", 
+		[2] = "--needed",
+		[3] = "-S",
+		[4] = NULL,
 	};
 
 	const pid_t forkPid = fork();
@@ -83,12 +86,7 @@ int install_package(Package *pkg) {
 			fprintf(stderr, "Could not fork new process: %s\n", strerror(forkErrno));
 			return forkErrno;
 		case 0: /* Child process */
-			fprintf(stdout, "Child process executing: %s...\n", cmd);
-
-			/* Use AUR helper or official repos for installation */
-			strcpy(cmd, pkg->onAur ? AUR_HELPER : "pacman");
-
-			const int execResult = execvp(cmd, (char **)cmdArgs);
+			const int execResult = execvp(cmdArgs[0], (char **)cmdArgs);
 
 			assert(execResult == -1); /* Exec only returns on errors */
 			int const execErrno = errno;

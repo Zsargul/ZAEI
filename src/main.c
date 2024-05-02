@@ -38,11 +38,11 @@ int main(int argc, char **argv) {
 	}
 
 	/* Install all packages first */
-	/* TODO: Fix this. doesnt work */
-	//if (install_packages(&config->packages_csv_path) == -1) {
+	/* TODO: Fix this. segmentation fault in parse_csv */
+	//if (install_packages(config->packages_csv_path) == -1) {
 	//	fprintf(stderr, "Exiting.\n");
 	//		exit(EXIT_FAILURE);
-	//	}
+	//}
 
 
 	/* TODO this is an optional config element. check if it exists before setting it up */
