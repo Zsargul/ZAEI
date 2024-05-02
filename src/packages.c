@@ -67,7 +67,7 @@ int install_packages(const char* pkgsListFile) {
 
 int install_package(Package *pkg) {
 	char cmd[MAX_STR_LEN];
-	const char *cmd_args[] = { 
+	const char* cmdArgs[] = { 
 		[0] = "--noconfirm", 
 		[1] = "--needed",
 		[2] = "-S",
@@ -88,7 +88,7 @@ int install_package(Package *pkg) {
 			/* Use AUR helper or official repos for installation */
 			strcpy(cmd, pkg->onAur ? AUR_HELPER : "pacman");
 
-			const int execResult = execvp(cmd, (char **)cmd_args);
+			const int execResult = execvp(cmd, (char **)cmdArgs);
 
 			assert(execResult == -1); /* Exec only returns on errors */
 			int const execErrno = errno;
