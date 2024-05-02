@@ -84,7 +84,7 @@ int init_config(Config* config) {
 	}
 
 	/* Deallocate memory for cfg object before returning */
-	config_destroy(&cfg);
+//	config_destroy(&cfg);
 
 	return ret;	
 }

@@ -13,7 +13,7 @@
 int install_dwm(const char* repoUrl, const char* targetDir) {
 	/* Check if repo exists */
 	if (repo_exists(repoUrl) == 0) {
-		fprintf(stdout, "Dwm: specified git repository exists. Cloning...\n");
+		fprintf(stdout, "Dwm: git repository %s exists. Cloning...\n", repoUrl);
 	} else {
 		fprintf(stdout, "Dwm: specified git repository with URL \"%s\" does not exist!\n", repoUrl);
 		return 1;
@@ -32,7 +32,7 @@ int install_dwm(const char* repoUrl, const char* targetDir) {
 int install_dwmblocks(const char* repoUrl, const char* targetDir) {
 	/* Check if repo exists */
 	if (repo_exists(repoUrl) == 0) {
-		fprintf(stdout, "Dwmblocks: specified git repository exists. Cloning...\n");
+		fprintf(stdout, "Dwmblocks: specified git %s repository exists. Cloning...\n", repoUrl);
 	} else {
 		fprintf(stderr, "Dwmblocks: specified git repository with URL \"%s\" does not exist!\n", repoUrl);
 		return 1;

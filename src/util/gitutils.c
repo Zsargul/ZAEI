@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
+#include <errno.h>
+#include <string.h>
+#include <unistd.h>
+#include <assert.h>
 
 #include "constants.h"
 #include "util/gitutils.h"
@@ -58,9 +63,11 @@ int clone_repo(const char* name, const char* repoUrl, const char* targetDir) {
  *  1: Repo doesn't exist
  */
 int repo_exists(const char* repoUrl) {
+	int ret = -1;
+
 	char cmd[MAX_STR_LEN];
 	const char* cmdArgs[] = {
-		[0] = "ls-config",
+		[0] = "ls-remote",
 		[1] = repoUrl,
 		NULL,
 	};
@@ -71,31 +78,35 @@ int repo_exists(const char* repoUrl) {
 		case -1:
 			const int forkErrno = errno;
 			fprintf(stderr, "Could not fork new process: %s\n", strerror(forkErrno));
-			return -1;
+			ret = -1;
 		case 0:
 			strcpy(cmd, "git");
 			const int execResult = execvp(cmd, (char **)cmdArgs);
 
 			assert(execResult == -1);
 			int const execErrno = errno;
-			fprintf("repo_exists(): Error from execvp() - %s\n", strerror(execErrno));
+			fprintf(stderr, "repo_exists(): Error from execvp() - %s\n", strerror(execErrno));
 
-			return -1;
+			ret = -1;
 		default:
 			int status;
-			if (waitpid(forkPid, &status, 0) > 0) { /* Child exited successfully */
-					assert(forkPid == waitResult);
+			int returnedPid = waitpid(forkPid, &status, 0);
+			if (returnedPid) { /* Child exited successfully */
+				assert(forkPid == returnedPid);
 
-					dbg_fprintf(stdout, "repo_exists(): Child exited with code %d", status);
-					if (WIFEXITED(status) && !WEXITSTATUS(status)) { /* Command returned successfully meaning repo exists */
-							return 0;
-					} else if (WIFEXITED(status) && WEXITSTATUS(status)) {
-							return 1; /* Repo doesn't exist */
-					}
+				dbg_fprintf(stdout, "repo_exists(): Child exited with code %d\n", status);
+				if (WIFEXITED(status) && !WEXITSTATUS(status)) { /* Command returned successfully meaning repo exists */
+					dbg_fprintf(stdout, "repo_exists(): Git command failure\n", status);
+					ret = 0;
+				} else if (WIFEXITED(status) && WEXITSTATUS(status)) {
+					dbg_fprintf(stdout, "repo_exists(): Git command success\n", status);
+					ret = 1; /* Repo doesn't exist */
+				}
 			} else {
-					int waitpidErrno = errno;
-					fprintf(stderr, "Error waiting for PID %d: %s\n", waitpidErrno, strerror(waitpidErrno));
-					return -1;
+				int waitpidErrno = errno;
+				fprintf(stderr, "Error waiting for PID %d: %s\n", waitpidErrno, strerror(waitpidErrno));
+				ret = -1;
 			}
 	}
+	return ret;
 }
