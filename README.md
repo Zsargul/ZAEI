@@ -21,8 +21,6 @@ a statically linked dependency of ZAEI. Since it is statically linked, you _must
 while the offical arch repositories contain the `libconfig` package, the package only contains dynamic `.so` libraries 
 installed into `/usr/lib`. Building from source gets you the static `.a` libs, which go into `/usr/include/lib`.
 
-TODO: Check if using the AUR gets you those .a libs too
-
 The specific version of libconfig that the current release binary was linked with is `libconfig 1.7.3`. The
 quick instructions to build and install it are below, or you can read the more detailed instructions
 [here](https://github.com/hyperrealm/libconfig/blob/master/INSTALL).
