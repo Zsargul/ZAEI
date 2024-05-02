@@ -47,9 +47,50 @@ int install_dwmblocks(const char* repoUrl, const char* targetDir) {
 
 /* TODO: Change this to a fork()/exec() call */
 /* Returns 0 if repo doesn't exist. */
+/* Return values:
+ * -1: Error
+ *  0: Repo exists
+ *  1: Repo doesn't exist
+ */
 int repo_exists(const char* repoUrl) {
 	char cmd[MAX_STR_LEN];
-	snprintf(cmd, sizeof(cmd), "git ls-remote %s", repoUrl);
+	const char* cmdArgs[] = {
+		[0] = "ls-config",
+		[1] = repoUrl,
+		NULL,
+	};
 
-	return system(cmd);
+	const pid_t forkPid = fork();
+
+	switch (forkPid) {
+		case -1:
+			const int forkErrno = errno;
+			fprintf(stderr, "Could not fork new process: %s\n", strerror(forkErrno));
+			return -1;
+		case 0:
+			strcpy(cmd, "git");
+			const int execResult = execvp(cmd, (char **)cmdArgs);
+
+			assert(execResult == -1);
+			int const execErrno = errno;
+			fprintf("repo_exists(): Error from execvp() - %s\n", strerror(execErrno));
+
+			return -1;
+		default:
+			int status;
+			if (waitpid(forkPid, &status, 0) > 0) { /* Child exited successfully */
+				assert(forkPid == waitResult);
+
+				dbg_fprintf(stdout, "repo_exists(): Child exited with code %d", status);
+				if (WIFEXITED(status) && !WEXITSTATUS(status)) { /* Command returned successfully meaning repo exists */
+					return 0;
+				} else if (WIFEXITED(status) && WEXITSTATUS(status)) {
+					return 1; /* Repo doesn't exist */
+				}
+			} else {
+				int waitpidErrno = errno;
+				fprintf(stderr, "Error waiting for PID %d: %s\n", waitpidErrno, strerror(waitpidErrno));
+				return -1;
+			}
+	}
 }
