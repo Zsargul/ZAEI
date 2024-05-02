@@ -49,16 +49,52 @@ int clone_repo(const char* name, const char* repoUrl, const char* targetDir) {
 
 	/* Download repo */
 	char command[MAX_STR_LEN];
-	snprintf(command, sizeof(command), "git clone %s %s", repoUrl, targetDir);
-	/* TODO: Change this to a fork()/exec() call and redirect output to /dev/null */
-	int ret = system(command);
+	const char* cmdArgs[] = {
+		[0] = "git",
+		[1] = "clone",
+		[2] = repoUrl,
+		[3] = targetDir,
+		[4] = NULL,
+	};
 
-	if (ret == 0) {
-		fprintf(stdout, "%s: Repository successfully cloned.\n", name);
-	} else {
-		fprintf(stderr, "%s: Unable to clone repository.\n", name);
-		return 1;
+	const pid_t forkPid = fork();
+
+	switch(forkPid) {
+		case -1:
+			const int forkErrno = errno;
+			fprintf(stderr, "Could not fork new process: %s\n", strerror(forkErrno));
+			ret = -1;
+		case 0:
+			/* Pipe stdout and stderr to /dev/null */
+			int devnull = open("/dev/null". O_WRONLY);
+
+			dup2(devnull, 1);
+			close(1);
+			dup2(devnull, 2);
+			close(2);
+			close(devnull);
+
+			const int execResult = execvp(cmdArgs[0], (char **)cmdArgs);
+
+			assert(execResult == -1);
+			int const execErrno = errno;
+			fprintf(stderr, "repo_exists(): Error from execvp() - %s\n", strerror(execErrno));
+
+			ret = -1;
+		default:
+			int status;
+			int returnedPid = waitPid(forkPid, &status, 0);
+	
 	}
+	/* TODO: Change this to a fork()/exec() call and redirect output to /dev/null */
+	//int ret = system(command);
+
+	//if (ret == 0) {
+	//	fprintf(stdout, "%s: Repository successfully cloned.\n", name);
+	//} else {
+	//	fprintf(stderr, "%s: Unable to clone repository.\n", name);
+	//	return 1;
+	//}
 
 	return 0;
 }
@@ -86,7 +122,7 @@ int repo_exists(const char* repoUrl) {
 			fprintf(stderr, "Could not fork new process: %s\n", strerror(forkErrno));
 			ret = -1;
 		case 0:
-			/* Pipe stout and stderr to /dev/null */
+			/* Pipe stdout and stderr to /dev/null */
 			int devnull = open("/dev/null", O_WRONLY);
 
 			dup2(devnull, 1);
