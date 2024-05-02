@@ -6,10 +6,14 @@
 #include <string.h>
 #include <unistd.h>
 #include <assert.h>
+#include <fcntl.h>
 
 #include "constants.h"
 #include "util/gitutils.h"
 #include "util/miscutils.h"
+
+/* TODO: Test the various possible output codes for the functions here, as some of the git utilities 
+ * especially return false positives and false negatives */
 
 /* TODO: Change system() to fork()/exec() */
 /* Returns 0 if git is installed. */
@@ -25,6 +29,8 @@ int git_installed() {
  * 1: Critical error
  */
 int clone_repo(const char* name, const char* repoUrl, const char* targetDir) {
+	/* TODO: Output the possible error "targetDir already exists and is not empty" */
+
 	/* Check if git is installed */
 	if (git_installed() != 0) {
 		fprintf(stderr, "Git is not installed/configured correctly on your system. Please install git before running this tool with any git repositories specified in the config.\n");
@@ -44,7 +50,7 @@ int clone_repo(const char* name, const char* repoUrl, const char* targetDir) {
 	/* Download repo */
 	char command[MAX_STR_LEN];
 	snprintf(command, sizeof(command), "git clone %s %s", repoUrl, targetDir);
-	/* TODO: Change this to a fork()/exec() call */
+	/* TODO: Change this to a fork()/exec() call and redirect output to /dev/null */
 	int ret = system(command);
 
 	if (ret == 0) {
@@ -80,6 +86,15 @@ int repo_exists(const char* repoUrl) {
 			fprintf(stderr, "Could not fork new process: %s\n", strerror(forkErrno));
 			ret = -1;
 		case 0:
+			/* Pipe stout and stderr to /dev/null */
+			int devnull = open("/dev/null", O_WRONLY);
+
+			dup2(devnull, 1);
+			close(1);
+			dup2(devnull, 2);
+			close(2);
+			close(devnull);
+
 			const int execResult = execvp(cmdArgs[0], (char **)cmdArgs);
 
 			assert(execResult == -1);
