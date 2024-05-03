@@ -7,6 +7,7 @@
 
 #include "constants.h"
 #include "util/miscutils.h"
+#include "util/logging.h"
 #include "configure.h"
 #include "packages.h"
 #include "wm_setup.h"
@@ -23,10 +24,10 @@ int main(int argc, char **argv) {
 
 	char* libconfigVer = libconfig_version();
 	if (libconfigVer == NULL) {
-		fprintf(stderr, "%s: Unable to get Libconfig version!\n", CRIT);
+		log_msg(stderr, ERR, "Unable to get Libconfig version!\n");
 		exit(EXIT_FAILURE);
 	} else {
-		fprintf(stdout, "Using Libconfig version: %s\n", libconfigVer);
+		log_msg(stdout, INFO, "Using Libconfig version: %s\n", libconfigVer);
 		free(libconfigVer);
 	}
 

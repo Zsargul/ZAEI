@@ -1,16 +1,21 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
 #include <time.h>
 
-#include "logging.h"
+#include "constants.h"
+#include "util/logging.h"
 
 /* fprintf wrapper used for logging. */
-void log(FILE* stream, const char* type, const char* format, ...) {	
+void log_msg(FILE* stream, const char* type, const char* format, ...) {	
 	va_list arg;
 	int done;
 
 	int padLen = LOG_MSG_LEN - strlen(type);
 	if (padLen < 0) padLen = 0;
 
-	fprintf(stream, "[ ---%*s%*s--- ]", 10+strlen(type)/2, type, 10-strlen(s)/2,""); /* Print log message type */
+	fprintf(stream, "[ ---%*s%*s--- ]", 10+strlen(type)/2, type, 10-strlen(type)/2,""); /* Print log message type */
 
 	va_start(arg, format);
 	done = vfprintf(stream, format, arg);
@@ -26,4 +31,9 @@ void usage(char* progName) {
 		;
 
 	fprintf(stdout, "Usage: %s\n\n%s", progName, helpMsg);
+}
+
+void failure() {
+	fprintf(stdout, "Fatal error encountered. Exiting.\n");
+	exit(EXIT_FAILURE);
 }
