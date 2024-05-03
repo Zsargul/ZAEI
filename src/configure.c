@@ -32,7 +32,7 @@ int init_config(Config* config) {
 
 	/* Get AUR helper */
 	if (config_lookup_string(&cfg, "aur_helper", &config->aur_helper)) {
-		log_msg(stdout, INFO, "CONFIG - aur_helper = %s\n", config->aur_helper);
+		log_msg(stdout, INFO, "CONFIG: aur_helper = %s\n", config->aur_helper);
 	} else {
 		log_msg(stderr, ERR, "CONFIG: Error getting value for field aur_helper in %s\n", CONFIG_FILE);
 		return -1;
@@ -42,44 +42,42 @@ int init_config(Config* config) {
 
 	/* Get path to packages .csv file */
 	if (config_lookup_string(&cfg, "packages_csv_path", &config->packages_csv_path)) { 
-		dbg_fprintf(stdout, "%s: Config - Found packages_csv_path: %s\n", INFO, config->packages_csv_path);
+		log_msg(stdout, INFO, "CONFIG: packages_csv_path = %s\n", config->packages_csv_path);
 	} else {
-		fprintf(stderr, "%s: Unable to find 'packages_file' field in config file!\n", CRIT);
+		log_msg(stderr, ERR, "CONFIG: Error getting value for field packages_file in %s\n", CONFIG_FILE);
 		return -1;
 	}
 
 	/* [OPTIONAL]  Get DWM git URL */
 	if (config_lookup_string(&cfg, "dwm_git_url", &config->dwm_git_url)) {
-		dbg_fprintf(stdout, "%s: Config - Found dwm_git_url: %s\n", INFO, config->dwm_git_url);
+		log_msg(stdout, INFO, "CONFIG: dwm_git_url = config->dwm_git_url");
 	} else {
-		fprintf(stderr, "%s: Didn't find field 'dwm_git_url' in config file. Skipping...\n", INFO);
+		/* TODO: Polish this optional parameter handling logic up later */
+		log_msg(stderr, ERR, "CONFIG: Error getting value for field dmw_git_url in %s\n", CONFIG_FILE);
 		config->dwm_git_url = NULL;
 	}
 
 	/* [OPTIONAL] Get DWM blocks git URL */
 	if (config_lookup_string(&cfg, "dwmblocks_git_url", &config->dwmblocks_git_url)) {
-		dbg_fprintf(stdout, "%s: Config - Found dwmblocks_git_url: %s\n", INFO, config->dwmblocks_git_url);
+		log_msg(stdout, INFO, "CONFIG: dwmblocks_git_url = %s\n", config->dwmblocks_git_url);
 	} else {
-		fprintf(stdout, "%s: Didn't find field 'dwmblocks_git_url' in config file. Skipping...\n", INFO);
+		log_msg(stdout, ERR, "CONFIG: Error getting value for field dwmblocks_git_url in %s\n", CONFIG_FILE);
 		config->dwmblocks_git_url = NULL;
 	}
 
 	/* [OPTIONAL] Get DWM install directory */
 	if (config_lookup_string(&cfg, "dwm_dir", &config->dwm_dir)) {
-		dbg_fprintf(stdout, "%s: Config - Found dwm_dir: %s\n", INFO, config->dwm_dir);
+		log_msg(stdout, INFO, "CONFIG: dwm_dir = %s\n", config->dwm_dir);
 	} else {
-		fprintf(stdout, "%s: Didn't find 'dwm_dir' value in config file. Skipping...\n", INFO);
+		log_msg(stderr, ERR, "CONFIG: Error getting value for field dwm_dir in %s\n", CONFIG_FILE);
 	}
 
 	/* [OPTIONAL] Get DWM blocks install directory */
 	if (config_lookup_string(&cfg, "dwmblocks_dir", &config->dwmblocks_dir)) {
-		dbg_fprintf(stdout, "%s: Config - Found dwmblocks_dir: %s\n", INFO, config->dwmblocks_dir);
+		log_msg(stdout, INFO, "CONFIG: dwmblocks_dir = %s\n", config->dwmblocks_dir);
 	} else {
-		fprintf(stdout, "%s: Didn't find 'dwmblocks_dir' value in config file. Skipping...\n", CRIT);
+		log_msg(stdout, ERR, "CONFIG: Error getting value for field dwmblocks_dir in %s\n", CONFIG_FILE);
 	}
-
-	/* Deallocate memory for cfg object before returning */
-//	config_destroy(&cfg);
 
 	return -1;	
 }
@@ -90,14 +88,12 @@ void opt_handler(int argc, char **argv) {
 	int opt;
 
 	/* Flags */
-	int d_flag = 0;
 	int h_flag = 0;
 
 	/* TODO: Debug and check that ALL of these work, short and long options */
 	/* Options */
 	struct option longOptions[] = {
 		{"help", 	no_argument, 		&h_flag, 	'h'},
-		{"debug",	no_argument,		&d_flag,	'd'},
 		{0, 0, 0, 0}
 	};
 
@@ -109,11 +105,6 @@ void opt_handler(int argc, char **argv) {
 				h_flag = 1;
 				usage(name);
 				exit(EXIT_SUCCESS);
-				break;
-			case 'd':
-				d_flag = 1;
-				enable_debug_mode();
-				dbg_fprintf(stdout, "! Enabled debug messages !\n");
 				break;
 			case '?': /* Invalid option or missing argument */
 				err_usage(name, "Unrecognised argument\n");
