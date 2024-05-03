@@ -14,16 +14,13 @@
  *  0: No errors/warnings
  */
 int init_config(Config* config) {
-	int ret = 0;
-
 	config_t cfg;
 	config_init(&cfg);
 
 	if (config_read_file(&cfg, CONFIG_FILE) != CONFIG_TRUE) {
-		fprintf(stderr, "%s: Libconfig error: %s:%d - %s\n", CRIT, config_error_file(&cfg), 
+		log_msg(stderr, ERR, "Libconfig error: %s:%d - %s\n", config_error_file(&cfg),
 				config_error_line(&cfg), config_error_text(&cfg));
-		ret = -1;
-		return ret;
+		return -1;
 	}
 
 	/* TODO: Make some of these options (like dwm/dwmblocks) optional, i.e, let them be commented out
@@ -35,11 +32,10 @@ int init_config(Config* config) {
 
 	/* Get AUR helper */
 	if (config_lookup_string(&cfg, "aur_helper", &config->aur_helper)) {
-		dbg_fprintf(stdout, "%s: Config - Found aur_helper: %s\n", INFO, config->aur_helper);
+		log_msg(stdout, INFO, "CONFIG - aur_helper = %s\n", config->aur_helper);
 	} else {
-		fprintf(stderr, "%s: Unable to find 'aur_helper' value in %s!\n", CRIT, CONFIG_FILE);
-		ret = -1;
-		return ret;
+		log_msg(stderr, ERR, "CONFIG: Error getting value for field aur_helper in %s\n", CONFIG_FILE);
+		return -1;
 	}
 	
 	/* TODO: Clean up the output messages below */
@@ -49,8 +45,7 @@ int init_config(Config* config) {
 		dbg_fprintf(stdout, "%s: Config - Found packages_csv_path: %s\n", INFO, config->packages_csv_path);
 	} else {
 		fprintf(stderr, "%s: Unable to find 'packages_file' field in config file!\n", CRIT);
-		ret = -1;
-		return ret;
+		return -1;
 	}
 
 	/* [OPTIONAL]  Get DWM git URL */
@@ -86,7 +81,7 @@ int init_config(Config* config) {
 	/* Deallocate memory for cfg object before returning */
 //	config_destroy(&cfg);
 
-	return ret;	
+	return -1;	
 }
 
 /* Parse any command line options. */

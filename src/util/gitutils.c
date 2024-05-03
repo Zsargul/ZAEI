@@ -91,7 +91,7 @@ int clone_repo(const char* repoUrl, const char* targetDir) {
 					log_msg(stdout, INFO, "Successfully cloned %s to %s\n", repoUrl, targetDir); /* TODO: Get just last part of the url i.e repo name and print that instead. dont pass it as a arg to the function. */
 					return 0;
 				} else if (WIFEXITED(status) && WEXITSTATUS(status)) {
-					log_msg(stdout, "clone_repo(): Git command failure\n", status);
+					log_msg(stdout, ERR, "clone_repo(): Git command failure\n", status);
 					return 1;
 				}
 			} else {

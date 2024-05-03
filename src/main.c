@@ -12,6 +12,11 @@
 #include "packages.h"
 #include "wm_setup.h"
 
+
+/* TODO: Write documentation describing the standards of return codes and which functions/modules return what. some functions
+ * should terminate when running into an important error. others should return an error representative value and let the calling
+ * function terminate the program if necessary */
+
 /* TODO: Refactor so that most functions, except ones in main and maybe wm_setup, don't print any output, but rather
  * just return values. These values should then be used to print appropriate info/errors in main, rather than having
  * them randomly littered all over helper functions */
@@ -34,8 +39,8 @@ int main(int argc, char **argv) {
 	Config* config = (Config*)malloc(sizeof(Config));
 
 	if (init_config(config) != 0) {
-		fprintf(stderr, "Exiting.\n");
-		exit(EXIT_FAILURE);
+		log_msg(stderr, ERR, "Failure initializing program config.\n");
+		failure();
 	}
 
 	/* Install all packages first */
@@ -49,15 +54,15 @@ int main(int argc, char **argv) {
 	/* TODO this is an optional config element. check if it exists before setting it up */
 	/* Setup DWM */
 	if (install_dwm(config->dwm_git_url, config->dwm_dir) != 0)  {
-		fprintf(stderr, "Exiting.\n");
-		exit(EXIT_FAILURE);
+		log_msg(stderr, ERR, "Failure installing DWM.\n");
+		failure();
 	}
 
 	/* TODO this is an optional config element. check if it exists before setting it up */
 	/* Setup DWM Blocks */
 	if (install_dwmblocks(config->dwmblocks_git_url, config->dwmblocks_dir) != 0) {
-		fprintf(stderr, "Exiting.\n");
-		exit(EXIT_FAILURE);
+		log_msg(stderr, ERR, "Failure installing dwmblocks.\n");
+		failure();
 	}
 
 	return EXIT_SUCCESS;
