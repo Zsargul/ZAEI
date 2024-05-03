@@ -25,8 +25,9 @@ int git_installed() {
 }
 
 /* Return values:
- * 0: Success
- * 1: Critical error
+ * -1: Critical Error
+ *  0: Success
+ *  1: Repository could not be cloned
  */
 int clone_repo(const char* name, const char* repoUrl, const char* targetDir) {
 	/* TODO: Output the possible error "targetDir already exists and is not empty" */
@@ -35,7 +36,7 @@ int clone_repo(const char* name, const char* repoUrl, const char* targetDir) {
 	/* Check if git is installed */
 	if (git_installed() != 0) {
 		fprintf(stderr, "Git is not installed/configured correctly on your system. Please install git before running this tool with any git repositories specified in the config.\n");
-		ret = 1;
+		ret = -1;
 	}
 
 	/* Create specified directory if it does not exist */
@@ -44,7 +45,7 @@ int clone_repo(const char* name, const char* repoUrl, const char* targetDir) {
 		fprintf(stdout, "%s: Directory %s does not exist. Creating it...\n", name, targetDir);
 		if (_mkdir(targetDir) != 0) {
 			fprintf(stderr, "%s: Error creating directory %s.\n", name, targetDir);
-			ret = 1;
+			ret = -1;
 		}
 	}
 
@@ -63,7 +64,7 @@ int clone_repo(const char* name, const char* repoUrl, const char* targetDir) {
 		case -1:
 			const int forkErrno = errno;
 			fprintf(stderr, "Could not fork new process: %s\n", strerror(forkErrno));
-			ret = 1;
+			ret = -1;
 		case 0:
 			/* Pipe stdout and stderr to /dev/null */
 			int devnull = open("/dev/null", O_WRONLY);
@@ -80,7 +81,7 @@ int clone_repo(const char* name, const char* repoUrl, const char* targetDir) {
 			int const execErrno = errno;
 			fprintf(stderr, "clone_repo(): Error from execvp() - %s\n", strerror(execErrno));
 
-			ret = 1;
+			ret = -1;
 		default:
 			int status;
 			int returnedPid = waitpid(forkPid, &status, 0);
@@ -89,11 +90,11 @@ int clone_repo(const char* name, const char* repoUrl, const char* targetDir) {
 
 				dbg_fprintf(stdout, "clone_repo(): Child exited with code %d\n", status);
 				if (WIFEXITED(status) && !WEXITSTATUS(status)) { /* Repo was cloned successfully */
-					dbg_fprintf(stdout, "repo_exists(): Git command failure\n", status);
+					dbg_fprintf(stdout, "repo_exists(): Git command success\n", status);
 					ret = 0;
 				} else if (WIFEXITED(status) && WEXITSTATUS(status)) {
-					dbg_fprintf(stdout, "clone_repo(): Git command success\n", status);
-					ret = -1; /* Repo doesn't exist */
+					dbg_fprintf(stdout, "clone_repo(): Git command failure\n", status);
+					ret = 1; /* Cannot clone repository */
 				}
 			} else {
 				int waitpidErrno = errno;
@@ -150,10 +151,10 @@ int repo_exists(const char* repoUrl) {
 
 				dbg_fprintf(stdout, "repo_exists(): Child exited with code %d\n", status);
 				if (WIFEXITED(status) && !WEXITSTATUS(status)) { /* Command returned successfully meaning repo exists */
-					dbg_fprintf(stdout, "repo_exists(): Git command failure\n", status);
+					dbg_fprintf(stdout, "repo_exists(): Git command success\n", status);
 					ret = 0;
 				} else if (WIFEXITED(status) && WEXITSTATUS(status)) {
-					dbg_fprintf(stdout, "repo_exists(): Git command success\n", status);
+					dbg_fprintf(stdout, "repo_exists(): Git command failure\n", status);
 					ret = 1; /* Repo doesn't exist */
 				}
 			} else {

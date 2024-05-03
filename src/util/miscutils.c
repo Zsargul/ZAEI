@@ -92,60 +92,6 @@ int _mkdir(const char* dirPath) {
 	return ret;
 }
 
-void enable_debug_mode() {
-	debugMode = 1;
-}
-
-/* Wrapper for fprintf for debugging */
-int dbg_fprintf(FILE *stream, const char *format, ...) {
-	if (!debugMode)
-		return 0;
-
-	va_list arg;
-	int done;
-
-	va_start(arg, format);
-	done = vfprintf(stream, format, arg);
-	va_end(arg);
-
-	return done;
-}
-
-/* Returns 0 if directory is not empty */
-int dir_not_empty(const char* dirname) {
-	int n = 0;
-	struct dirent *d;
-
-	DIR *dir = opendir(dirname); 
-	if (dir == NULL) /* Not a directory or does not exist */
-		return 1;
-
-	while ((d = readdir(dir)) != NULL) {
-		if (++n > 2)
-			break;
-	}
-	closedir(dir);
-
-	if (n <= 2) /* Empty */
-		return 1;
-	else
-		return 0;
-}
-
-void err_usage(char* progName, char* errStr) {
-	fprintf(stderr, "%s\n", errStr);
-	usage(progName);
-}
-
-void usage(char* progName) {
-	char *helpMsg =
-		"  -h, --help			Print usage help and program information\n"
-		"  -b, --debug			Enable debug mode, which gives more verbose logs\n"
-		;
-
-	fprintf(stdout, "Usage: %s\n\n%s", progName, helpMsg);
-}
-
 char* libconfig_version() {
 	char* str = malloc(MAX_STR_LEN);
 	if (snprintf(str, MAX_STR_LEN, "%d.%d.%d", LIBCONFIG_VER_MAJOR,

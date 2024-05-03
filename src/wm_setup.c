@@ -12,16 +12,21 @@
  */
 int install_dwm(const char* repoUrl, const char* targetDir) {
 	/* Check if repo exists */
-	if (repo_exists(repoUrl) == 0) {
-		fprintf(stdout, "Dwm: git repository %s exists. Cloning...\n", repoUrl);
-	} else {
-		fprintf(stdout, "Dwm: specified git repository with URL \"%s\" does not exist!\n", repoUrl);
-		return 1;
+	int exists = repo_exists(repoUrl);
+
+	switch(exists) {
+		case -1:
+			fprintf(stderr, "Error in fork/exec when checking if git repository exists.\n");
+			return 1;
+		case 1:
+			fprintf(stderr, "Specified repository cannot be accessed.\n");
+			return 1;
+		default: /* 0 - Repository exists */
+			fprintf(stdout, "Dwm: git repository %s exists. Cloning...\n", repoUrl);
+
+			if (clone_repo("Dwm", repoUrl, targetDir) != 0) 
+				return 1;
 	}
-
-	if (clone_repo("Dwm", repoUrl, targetDir) != 0) 
-		return 1;
-
 	return 0;	
 }
 
@@ -31,15 +36,22 @@ int install_dwm(const char* repoUrl, const char* targetDir) {
  */
 int install_dwmblocks(const char* repoUrl, const char* targetDir) {
 	/* Check if repo exists */
-	if (repo_exists(repoUrl) == 0) {
-		fprintf(stdout, "Dwmblocks: specified git %s repository exists. Cloning...\n", repoUrl);
-	} else {
-		fprintf(stderr, "Dwmblocks: specified git repository with URL \"%s\" does not exist!\n", repoUrl);
-		return 1;
-	}
+	int exists = repo_exists(repoUrl);
 
-	if (clone_repo("Dwmblocks", repoUrl, targetDir) != 0)
-		return 1;
+	switch(exists) {
+		case -1:
+			fprintf(stderr, "Error in fork/exec when trying to clone git repository.\n");
+			return 1;
+		case 1:
+			fprintf(stderr, "Specified repository cannot be accessed.\n");
+			return 1;
+		default: /* 0 - Repository exists */
+			fprintf(stdout, "Dwmblocks: git repository %s exists. Cloning...\n", repoUrl);
+
+			int clone = clone_repo("Dwmblocks", repoUrl, targetDir);
+
+			/* TODO: clone dwm here */
+	}
 
 	return 0;
 }
