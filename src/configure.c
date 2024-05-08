@@ -8,6 +8,7 @@
 #include "constants.h"
 #include "util/miscutils.h"
 #include "configure.h"
+#include "util/logging.h"
 
 /* Returns values:
  * -1: Critical error
@@ -16,6 +17,9 @@
 int init_config(Config* config) {
 	config_t cfg;
 	config_init(&cfg);
+
+	/* TODO: Get rid of this */
+	log_msg(stdout, WARN, "Test log warning\n");
 
 	if (config_read_file(&cfg, CONFIG_FILE) != CONFIG_TRUE) {
 		log_msg(stderr, ERR, "Libconfig error: %s:%d - %s\n", config_error_file(&cfg),
@@ -107,7 +111,7 @@ void opt_handler(int argc, char **argv) {
 				exit(EXIT_SUCCESS);
 				break;
 			case '?': /* Invalid option or missing argument */
-				err_usage(name, "Unrecognised argument\n");
+				log_msg(stderr, ERR, "Unrecognised argument \"%s\".\n", opt);
 				exit(EXIT_FAILURE);
 		}
 	}

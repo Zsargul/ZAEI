@@ -5,6 +5,7 @@
 #include "util/parsecsv.h"
 #include "constants.h"
 #include "packages.h"
+#include "util/logging.h"
 
 int csv_lines(const char* filename) {
 	FILE *fp = fopen(filename, "r");
@@ -38,6 +39,7 @@ int csv_lines(const char* filename) {
  * 0: Success
  */
 int parse_package_list(const char* filename, Package *pkgs_array, int size) {
+	printf("1");
 	FILE* fp = fopen(filename, "r");
 	if (fp == NULL) {
 		fprintf(stderr, "Error opening file %s", filename);

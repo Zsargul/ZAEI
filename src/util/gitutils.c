@@ -145,7 +145,6 @@ int repo_exists(const char* repoUrl) {
 			if (returnedPid) { /* Child exited successfully */
 				assert(forkPid == returnedPid);
 
-				dbg_fprintf(stdout, "repo_exists(): Child exited with code %d\n", status);
 				if (WIFEXITED(status) && !WEXITSTATUS(status)) { /* Command returned successfully meaning repo exists */
 					log_msg(stdout, INFO, "Repository at %s exists.\n", repoUrl);
 					return 0;

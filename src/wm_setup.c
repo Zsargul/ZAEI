@@ -23,16 +23,10 @@ int install_dwm(const char* repoUrl, const char* targetDir) {
 		failure();
 	}
 
-	switch(exists) {
-		case 1:
-			fprintf(stderr, "Specified repository cannot be accessed.\n");
-			return 1;
-		default: /* 0 - Repository exists */
-			fprintf(stdout, "Dwm: git repository %s exists. Cloning...\n", repoUrl);
 
-			if (clone_repo(repoUrl, targetDir) != 0) 
-				return 1;
-	}
+	if (clone_repo(repoUrl, targetDir) != 0) 
+		return 1;
+
 	return 0;	
 }
 

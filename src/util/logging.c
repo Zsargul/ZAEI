@@ -12,10 +12,17 @@ void log_msg(FILE* stream, const char* type, const char* format, ...) {
 	va_list arg;
 	int done;
 
-	int padLen = LOG_MSG_LEN - strlen(type);
-	if (padLen < 0) padLen = 0;
+	int padLen, padLeft, padRight;
+	padLen = (LOG_MSG_LEN - strlen(type));
 
-	fprintf(stream, "[ ---%*s%*s--- ]", 10+strlen(type)/2, type, 10-strlen(type)/2,""); /* Print log message type */
+	if (padLen < 0) {
+		padLeft = padRight = 0;
+	} else {
+		padLeft = padRight = (padLen / 2);
+		if (padLen % 2 != 0) padLeft++; /* Add extra padding to account for odd number length strings */
+	}
+
+	fprintf(stream, "[ %*s%s%*s ] ", padLeft, "", type, padRight, ""); /* Print log message type */
 
 	va_start(arg, format);
 	done = vfprintf(stream, format, arg);
