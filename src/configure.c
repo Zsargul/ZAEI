@@ -18,9 +18,6 @@ int init_config(Config* config) {
 	config_t cfg;
 	config_init(&cfg);
 
-	/* TODO: Get rid of this */
-	log_msg(stdout, WARN, "Test log warning\n");
-
 	if (config_read_file(&cfg, CONFIG_FILE) != CONFIG_TRUE) {
 		log_msg(stderr, ERR, "Libconfig error: %s:%d - %s\n", config_error_file(&cfg),
 				config_error_line(&cfg), config_error_text(&cfg));
@@ -54,7 +51,7 @@ int init_config(Config* config) {
 
 	/* [OPTIONAL]  Get DWM git URL */
 	if (config_lookup_string(&cfg, "dwm_git_url", &config->dwm_git_url)) {
-		log_msg(stdout, INFO, "CONFIG: dwm_git_url = config->dwm_git_url");
+		log_msg(stdout, INFO, "CONFIG: dwm_git_url = config->dwm_git_url\n");
 	} else {
 		/* TODO: Polish this optional parameter handling logic up later */
 		log_msg(stderr, ERR, "CONFIG: Error getting value for field dmw_git_url in %s\n", CONFIG_FILE);
@@ -83,7 +80,7 @@ int init_config(Config* config) {
 		log_msg(stdout, ERR, "CONFIG: Error getting value for field dwmblocks_dir in %s\n", CONFIG_FILE);
 	}
 
-	return -1;	
+	return 0;	
 }
 
 /* Parse any command line options. */
