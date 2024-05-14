@@ -39,7 +39,6 @@ int csv_lines(const char* filename) {
  * 0: Success
  */
 int parse_package_list(const char* filename, Package *pkgs_array, int size) {
-	printf("1");
 	FILE* fp = fopen(filename, "r");
 	if (fp == NULL) {
 		fprintf(stderr, "Error opening file %s", filename);
@@ -74,30 +73,32 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 		/* Get 0th (first) field */
 		name = get_field(tmp, 0);
 		if (name == NULL) {
-			fprintf(stderr, "Error parsing csv. Value in field '%s' is null.", fields[0]);
+			log_msg(stderr, ERR, "Error parsing csv. Value in field '%s' is null.", fields[0]);
 			return 1;
 		}
 
 		const char* reqField = get_field(tmp, 1);
 		const char* onAurfield = get_field(tmp, 2);
 
+		log_msg(stdout, WARN, "%s\n", reqField);
 		/* Get 1st field */
 		if (strcmp(reqField, "yes") == 0) {
 			req = 1;
 		} else if (strcmp(reqField, "no") == 0) {
 			req = 0;
 		} else {
-			fprintf(stderr, "Unknown value encountered in csv field %d (%s)", 1, fields[1]);
+			log_msg(stderr, ERR, "Unknown value encountered in csv field %d (%s)", 1, fields[1]);
 			return 1;
 		}
 
+		log_msg(stdout, WARN, "22222222\n");
 		/* Get 2nd field */
 		if (strcmp(onAurfield, "yes") == 0) {
 			onAur = 1;
 		} else if (strcmp(onAurfield, "no") == 0) {
 			onAur = 0;
 		} else {
-			fprintf(stderr, "Unknown value encountered in csv field %d (%s)", 2, fields[2]);
+			log_msg(stderr, ERR, "Unknown value encountered in csv field %d (%s)", 2, fields[2]);
 			return 1;
 		}
 		

@@ -24,7 +24,7 @@ int install_packages(const char* pkgsListFile) {
 	Package* pkgs = (Package*)malloc(packageCount * sizeof(Package));; /* Array of packages to install */
 	log_msg(stdout, INFO, "install_packages(): allocated memory for %d packages\n", packageCount);
 
-
+	log_msg(stdout, WARN, "111111\n");
 	if (parse_package_list(pkgsListFile, pkgs, packageCount) != 0)
 		return -1;
 
