@@ -65,6 +65,8 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 	char buff[MAX_STR_LEN];
 	while ( (fgets(buff, sizeof(buff), fp) != NULL) && (lineNo != size) ) {
 		const char* name;
+		const char* reqField;
+	   	const char*	onAurField;
 		int req;
 		int onAur;
 		
@@ -77,10 +79,12 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 			return 1;
 		}
 
-		const char* reqField = get_field(tmp, 1);
-		const char* onAurfield = get_field(tmp, 2);
+		log_msg(stdout, WARN, "name: %s\n", name);
+		reqField = get_field(tmp, 1);
+		onAurField = get_field(tmp, 2);
 
-		log_msg(stdout, WARN, "%s\n", reqField);
+		log_msg(stdout, WARN, "reqfield: %s\n", reqField); // Segfault bug: these 2 are null. fix.
+		log_msg(stdout, WARN, "onaurfield: %s\n", reqField);
 		/* Get 1st field */
 		if (strcmp(reqField, "yes") == 0) {
 			req = 1;
@@ -93,9 +97,9 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 
 		log_msg(stdout, WARN, "22222222\n");
 		/* Get 2nd field */
-		if (strcmp(onAurfield, "yes") == 0) {
+		if (strcmp(onAurField, "yes") == 0) {
 			onAur = 1;
-		} else if (strcmp(onAurfield, "no") == 0) {
+		} else if (strcmp(onAurField, "no") == 0) {
 			onAur = 0;
 		} else {
 			log_msg(stderr, ERR, "Unknown value encountered in csv field %d (%s)", 2, fields[2]);
