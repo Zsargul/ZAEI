@@ -5,6 +5,7 @@
 #include "constants.h"
 #include "util/miscutils.h"
 #include "util/gitutils.h"
+#include "util/logging.h"
 
 /* Return values:
  * 0: Success

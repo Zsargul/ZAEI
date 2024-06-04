@@ -64,7 +64,7 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 	int lineNo = 0;
 	char buff[MAX_STR_LEN];
 	while ( (fgets(buff, sizeof(buff), fp) != NULL) && (lineNo != size) ) {
-		const char* name;
+		const char* name, reqField, onAurField;
 		int req;
 		int onAur;
 		
@@ -77,8 +77,17 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 			return 1;
 		}
 
-		const char* reqField = get_field(tmp, 1);
-		const char* onAurfield = get_field(tmp, 2);
+		reqField = get_field(tmp, 1);
+		if (reqField = NULL) {
+			log_msg(stderr, ERR, "Error parsing csv. Value in field '%s' is null.", fields[1]);
+			return 1;
+		}
+
+		onAurField = get_field(tmp, 2);
+		if (onAurField == NULL) {
+			log_msg(stderr, ERR, "Error parsing csv. Value in field '%s' is null.", fields[2]);
+			return 1;
+		}
 
 		log_msg(stdout, WARN, "%s\n", reqField);
 		/* Get 1st field */
@@ -93,9 +102,9 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 
 		log_msg(stdout, WARN, "22222222\n");
 		/* Get 2nd field */
-		if (strcmp(onAurfield, "yes") == 0) {
+		if (strcmp(onAurField, "yes") == 0) {
 			onAur = 1;
-		} else if (strcmp(onAurfield, "no") == 0) {
+		} else if (strcmp(onAurField, "no") == 0) {
 			onAur = 0;
 		} else {
 			log_msg(stderr, ERR, "Unknown value encountered in csv field %d (%s)", 2, fields[2]);
