@@ -59,7 +59,6 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 		}
 
 		for (int i = 0; i < (sizeof(fields) / sizeof(fields[0])); i++) {
-			log_msg(stdout, WARN, "x");
 			fields[i] = get_field(strdup(header), i);
 		}
 	}
@@ -77,13 +76,21 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 	char buff[MAX_STR_LEN];
 	while ( (fgets(buff, sizeof(buff), fp) != NULL) && (lineNo != size) ) {
 		/* TODO: This should be const char *//* const */ char* name, reqField, onAurField;
-		const char* name;
-		const char* reqField;
-	   	const char*	onAurField;
 		int req;
 		int onAur;
 		
-		char* tmp = stdup(buff);
+		char* tmp = buff;
+
+		onAurField = get_field(tmp, 2);
+		if (onAurField == NULL) {
+			log_msg(stderr, ERR, "Error parsing csv. Value in field '%s' is null.", fields[2]);
+			return 1;
+		}
+		reqField = get_field(tmp, 1);
+		if (reqField == NULL) {
+			log_msg(stderr, ERR, "Error parsing csv. Value in field '%s' is null.", fields[1]);
+			return 1;
+		}
 		
 		/* Get 0th (first) field */
 		name = get_field(tmp, 0);
@@ -92,17 +99,7 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 			return 1;
 		}
 
-		reqField = get_field(tmp, 1);
-		if (reqField == NULL) {
-			log_msg(stderr, ERR, "Error parsing csv. Value in field '%s' is null.", fields[1]);
-			return 1;
-		}
 
-		onAurField = get_field(tmp, 2);
-		if (onAurField == NULL) {
-			log_msg(stderr, ERR, "Error parsing csv. Value in field '%s' is null.", fields[2]);
-			return 1;
-		}
 		log_msg(stdout, WARN, "name: %s\n", name);
 		reqField = get_field(tmp, 1);
 		onAurField = get_field(tmp, 2);
@@ -149,7 +146,7 @@ const char* get_field(char* line, int num) {
 		if (n == num) {
 			return tok;
 		 } else {
-			tok = strtok(NULL, ",");
+			tok = strtok(NULL, ",\n");
 			n++;
 		 }
 
