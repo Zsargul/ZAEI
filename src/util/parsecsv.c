@@ -60,7 +60,7 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 
 		for (int i = 0; i < (sizeof(fields) / sizeof(fields[0])); i++) {
 			log_msg(stdout, WARN, "x");
-			fields[i] = get_field(header, i+1);
+			fields[i] = get_field(strdup(header), i);
 		}
 	}
 
@@ -80,7 +80,7 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 		int req;
 		int onAur;
 		
-		char* tmp = strdup(buff);
+		char* tmp = stdup(buff);
 		
 		/* Get 0th (first) field */
 		name = get_field(tmp, 0);
@@ -90,7 +90,7 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 		}
 
 		reqField = get_field(tmp, 1);
-		if (reqField = NULL) {
+		if (reqField == NULL) {
 			log_msg(stderr, ERR, "Error parsing csv. Value in field '%s' is null.", fields[1]);
 			return 1;
 		}
@@ -136,9 +136,8 @@ const char* get_field(char* line, int num) {
 	char* tok;
 
 	tok = strtok(line, ",");
-	log_msg(stdout, WARN, "%s\n", tok);
 
-	int n = 1;
+	int n = 0;
 	while (tok != NULL) {
 		if (n == num) {
 			return tok;
