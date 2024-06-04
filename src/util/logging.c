@@ -10,7 +10,6 @@
 /* fprintf wrapper used for logging. */
 void log_msg(FILE* stream, const char* type, const char* format, ...) {	
 	va_list arg;
-	int done;
 
 	int padLen, padLeft, padRight;
 	padLen = (LOG_MSG_LEN - strlen(type));
@@ -25,10 +24,8 @@ void log_msg(FILE* stream, const char* type, const char* format, ...) {
 	fprintf(stream, "[ %*s%s%*s ] ", padLeft, "", type, padRight, ""); /* Print log message type */
 
 	va_start(arg, format);
-	done = vfprintf(stream, format, arg);
+	vfprintf(stream, format, arg);
 	va_end(arg);
-
-	return done;
 }
 
 void usage(char* progName) {
