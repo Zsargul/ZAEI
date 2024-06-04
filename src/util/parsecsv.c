@@ -52,19 +52,31 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 		fclose(fp);
 		return 1; /* Error reading header */
 	} else {
+		char* tmp = strdup(header);
 		if (CSV_FIELDS != (sizeof(fields) / sizeof(fields[0]))) {
 			fprintf(stderr, "fields[] array is not the same size as the amount of fields in %s\n", filename);
 			return 1;
 		}
 
-		for (size_t i = 0; i < (sizeof(fields) / sizeof(fields[0])); i++)
-			fields[i] = get_field(header, i);
+		for (int i = 0; i < (sizeof(fields) / sizeof(fields[0])); i++) {
+			log_msg(stdout, WARN, "x");
+			fields[i] = get_field(header, i+1);
+		}
+	}
+
+	for (int i = 0; i < CSV_FIELDS; i++) {
+		if (fields[i] == NULL) {
+			log_msg(stderr, ERR, "Error parsing headers for csv file. Header at index fields[%d] is null.\n", i);
+			return 1;
+		} else {
+			log_msg(stdout, WARN, "%s\n", fields[i]);
+		}
 	}
 
 	int lineNo = 0;
 	char buff[MAX_STR_LEN];
 	while ( (fgets(buff, sizeof(buff), fp) != NULL) && (lineNo != size) ) {
-		const char* name, reqField, onAurField;
+		/* TODO: This should be const char *//* const */ char* name, reqField, onAurField;
 		int req;
 		int onAur;
 		
@@ -121,14 +133,30 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 }	
 
 const char* get_field(char* line, int num) {
-	const char* tok;
+	char* tok;
 
+	tok = strtok(line, ",");
+	log_msg(stdout, WARN, "%s\n", tok);
+
+	int n = 1;
+	while (tok != NULL) {
+		if (n == num) {
+			return tok;
+		 } else {
+			tok = strtok(NULL, ",");
+			n++;
+		 }
+
+	}
+	return NULL;
+	/*
 	tok = strtok(line, ",");
 	while (tok != NULL) {
 		if (!num--)
 			return tok;
 
-		tok = strtok(NULL, line);
+		tok = strtok(NULL, ",");
 	}
 	return NULL;
+	*/
 }
