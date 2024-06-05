@@ -67,8 +67,6 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 		if (fields[i] == NULL) {
 			log_msg(stderr, ERR, "Error parsing headers for csv file. Header at index fields[%d] is null.\n", i);
 			return 1;
-		} else {
-			log_msg(stdout, WARN, "%s\n", fields[i]);
 		}
 	}
 
