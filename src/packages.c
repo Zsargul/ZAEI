@@ -53,7 +53,6 @@ int install_packages(const char* pkgsListFile) {
 			officialPkgsCount,
 			aurPkgsCount);
 
-	exit(1);
 	return successfulInstalls;
 }
 
