@@ -1,3 +1,4 @@
 # Ignore compiled objects and binaries
 bin/*
 obj/*
+*.swp
