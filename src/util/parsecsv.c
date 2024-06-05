@@ -136,30 +136,15 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 	return 0;
 }	
 
+/* Uses strsep() instead of strtok() to allow for parsing empty fields in csv. */
 const char* get_field(char* line, int num) {
 	char* tok;
 
-	tok = strtok(line, ",");
-
-	int n = 0;
-	while (tok != NULL) {
-		if (n == num) {
+	for (tok = strsep(&line, ",");
+			tok;
+			tok = strsep(&line, ",\n")) {
+		if (!--num)
 			return tok;
-		 } else {
-			tok = strtok(NULL, ",\n");
-			n++;
-		 }
-
 	}
 	return NULL;
-	/*
-	tok = strtok(line, ",");
-	while (tok != NULL) {
-		if (!num--)
-			return tok;
-
-		tok = strtok(NULL, ",");
-	}
-	return NULL;
-	*/
 }
