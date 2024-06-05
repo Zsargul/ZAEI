@@ -59,7 +59,7 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 		}
 
 		for (int i = 0; i < (sizeof(fields) / sizeof(fields[0])); i++) {
-			fields[i] = get_field(strdup(header), i);
+			fields[i] = get_field(strdup(header), i+1);
 		}
 	}
 
@@ -74,36 +74,35 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 
 	int lineNo = 0;
 	char buff[MAX_STR_LEN];
-	while ( (fgets(buff, sizeof(buff), fp) != NULL) && (lineNo != size) ) {
-		/* TODO: This should be const char *//* const */ char* name, reqField, onAurField;
+	while ( (fgets(buff, sizeof(buff), fp) != NULL) ) {
+		/* TODO: This should be const char *//* const */ 
+		const char* name;
+	    const char*	reqField;
+		const char* onAurField;
 		int req;
 		int onAur;
 		
-		char* tmp = buff;
-
-		onAurField = get_field(tmp, 2);
-		if (onAurField == NULL) {
-			log_msg(stderr, ERR, "Error parsing csv. Value in field '%s' is null.", fields[2]);
-			return 1;
-		}
-		reqField = get_field(tmp, 1);
-		if (reqField == NULL) {
-			log_msg(stderr, ERR, "Error parsing csv. Value in field '%s' is null.", fields[1]);
-			return 1;
-		}
-		
-		/* Get 0th (first) field */
-		name = get_field(tmp, 0);
+		name = get_field(strdup(buff), 1);
 		if (name == NULL) {
 			log_msg(stderr, ERR, "Error parsing csv. Value in field '%s' is null.", fields[0]);
 			return 1;
 		}
 
+		reqField = get_field(strdup(buff), 2);
+		if (reqField == NULL) {
+			log_msg(stderr, ERR, "Error parsing csv. Value in field '%s' is null.", fields[1]);
+			return 1;
+		}
+
+		onAurField = get_field(strdup(buff), 3);
+		if (onAurField == NULL) {
+			log_msg(stderr, ERR, "Error parsing csv. Value in field '%s' is null.", fields[2]);
+			return 1;
+		}
+		
+
 
 		log_msg(stdout, WARN, "name: %s\n", name);
-		reqField = get_field(tmp, 1);
-		onAurField = get_field(tmp, 2);
-
 		log_msg(stdout, WARN, "reqfield: %s\n", reqField); // Segfault bug: these 2 are null. fix.
 		log_msg(stdout, WARN, "onaurfield: %s\n", reqField);
 		/* Get 1st field */
@@ -131,20 +130,22 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 		Package pkg = { {name}, req,  onAur };
 		pkgs_array[lineNo] = pkg;		
 
-		free(tmp);
 	}
 	return 0;
 }	
 
-/* Uses strsep() instead of strtok() to allow for parsing empty fields in csv. */
+/* Uses strsep() instead of strtok() to allow for parsing empty fields in csv.
+ * Index of fields on each line is 1 indexed, not 0. */
 const char* get_field(char* line, int num) {
 	char* tok;
 
 	for (tok = strsep(&line, ",");
 			tok;
 			tok = strsep(&line, ",\n")) {
-		if (!--num)
+		if (!--num) {
+			log_msg(stdout, INFO, "%s\n", tok);
 			return tok;
+		}
 	}
 	return NULL;
 }
