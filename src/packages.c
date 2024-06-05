@@ -24,7 +24,6 @@ int install_packages(const char* pkgsListFile) {
 	Package* pkgs = (Package*)malloc(packageCount * sizeof(Package));; /* Array of packages to install */
 	log_msg(stdout, INFO, "install_packages(): allocated memory for %d packages\n", packageCount);
 
-	log_msg(stdout, WARN, "111111\n");
 	if (parse_package_list(pkgsListFile, pkgs, packageCount) != 0)
 		return -1;
 
@@ -40,9 +39,9 @@ int install_packages(const char* pkgsListFile) {
 		
 		log_msg(stdout, INFO, "Installing package [%d/%d]\n", i+1, packageCount);
 		if (ret != 0 && pkgPtr->req) {
-			log_msg(stderr, WARN, "Package [%d] %s was not installed successfully, but it is not required.\n", i, *(pkgs[i].name));
+			log_msg(stderr, WARN, "Package %s was not installed successfully, but is not required.\n", *(pkgs[i].name));
 		} else if (ret != 0 && !(pkgPtr->req)) {
-			log_msg(stderr, ERR, "REQUIRED package [%d] %s was not installed successfully.\n", i, *(pkgs[i].name));
+			log_msg(stderr, ERR, "REQUIRED package %s was not installed successfully.\n", *(pkgs[i].name));
 			return -1;
 		} else {
 			/* Don't bother logging successful installation of each package. Only print stuff if theres problems. */

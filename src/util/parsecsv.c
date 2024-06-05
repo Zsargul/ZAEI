@@ -75,7 +75,6 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 	int lineNo = 0;
 	char buff[MAX_STR_LEN];
 	while ( (fgets(buff, sizeof(buff), fp) != NULL) ) {
-		/* TODO: This should be const char *//* const */ 
 		const char* name;
 	    const char*	reqField;
 		const char* onAurField;
@@ -99,12 +98,7 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 			log_msg(stderr, ERR, "Error parsing csv. Value in field '%s' is null.", fields[2]);
 			return 1;
 		}
-		
 
-
-		log_msg(stdout, WARN, "name: %s\n", name);
-		log_msg(stdout, WARN, "reqfield: %s\n", reqField); // Segfault bug: these 2 are null. fix.
-		log_msg(stdout, WARN, "onaurfield: %s\n", reqField);
 		/* Get 1st field */
 		if (strcmp(reqField, "yes") == 0) {
 			req = 1;
@@ -115,7 +109,6 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 			return 1;
 		}
 
-		log_msg(stdout, WARN, "22222222\n");
 		/* Get 2nd field */
 		if (strcmp(onAurField, "yes") == 0) {
 			onAur = 1;
@@ -129,7 +122,7 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 		/* Create new package as struct and add to array */
 		Package pkg = { {name}, req,  onAur };
 		pkgs_array[lineNo] = pkg;		
-
+		log_msg(stdout, INFO, "package name: %s\n", *(pkg.name));
 	}
 	return 0;
 }	
