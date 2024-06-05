@@ -52,7 +52,6 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 		fclose(fp);
 		return 1; /* Error reading header */
 	} else {
-		char* tmp = strdup(header);
 		if (CSV_FIELDS != (sizeof(fields) / sizeof(fields[0]))) {
 			fprintf(stderr, "fields[] array is not the same size as the amount of fields in %s\n", filename);
 			return 1;
@@ -120,7 +119,8 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 		/* Create new package as struct and add to array */
 		Package pkg = { {name}, req,  onAur };
 		pkgs_array[lineNo] = pkg;		
-		log_msg(stdout, INFO, "package name: %s\n", *(pkg.name));
+
+		lineNo++;
 	}
 	return 0;
 }	

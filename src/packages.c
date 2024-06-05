@@ -37,9 +37,7 @@ int install_packages(const char* pkgsListFile) {
 		int ret = install_package(pkgPtr);
 		
 		log_msg(stdout, INFO, "Installing package [%d/%d]\n", i+1, packageCount);
-		if (ret != 0) {
-		} else {
-			/* Don't bother logging successful installation of each package. Only print stuff if theres problems. */
+		if (ret == 0) {
 			successfulInstalls++;
 			(pkgPtr->onAur) ? aurPkgsCount++ : officialPkgsCount++;
 		}
@@ -84,10 +82,10 @@ int install_package(Package *pkg) {
 			const int execResult = execvp(cmdArgs[0], (char **)cmdArgs);
 
 			assert(execResult == -1); /* Exec only returns on errors */
-			log_msg(stderr, ERR, "Error installing package '%s': %s\n", pkg->name, strerror(errno));
+			log_msg(stderr, ERR, "Error installing package '%s': %s\n", *(pkg->name), strerror(errno));
 
 			if (pkg->req) {
-				log_msg(stderr, ERR, "Failure to install required package '%s'.\n", pkg->name);
+				log_msg(stderr, ERR, "Failure to install required package '%s'.\n", *(pkg->name));
 				/* TODO: Refactor this stuff so that failure to install a required package terminates the program. */
 			}
 
@@ -104,7 +102,7 @@ int install_package(Package *pkg) {
 
 			/* Assert that what we forked is what we waited for */
 			assert(forkPid == waitResult);
-			break;
+
+			return 0;
 	}
-	return 0;
 }
