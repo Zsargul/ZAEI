@@ -38,11 +38,7 @@ int install_packages(const char* pkgsListFile) {
 		int ret = install_package(pkgPtr);
 		
 		log_msg(stdout, INFO, "Installing package [%d/%d]\n", i+1, packageCount);
-		if (ret != 0 && pkgPtr->req) {
-			log_msg(stderr, WARN, "Package %s was not installed successfully, but is not required.\n", *(pkgs[i].name));
-		} else if (ret != 0 && !(pkgPtr->req)) {
-			log_msg(stderr, ERR, "REQUIRED package %s was not installed successfully.\n", *(pkgs[i].name));
-			return -1;
+		if (ret != 0) {
 		} else {
 			/* Don't bother logging successful installation of each package. Only print stuff if theres problems. */
 			successfulInstalls++;
@@ -60,6 +56,7 @@ int install_packages(const char* pkgsListFile) {
 			officialPkgsCount,
 			aurPkgsCount);
 
+	exit(1);
 	return successfulInstalls;
 }
 
@@ -82,26 +79,28 @@ int install_package(Package *pkg) {
 	/* TODO: Rethink return values for this? */
 	switch (forkPid) {
 		case -1:
-			const int forkErrno = errno; /* Save error code */
-			log_msg(stderr, ERR, "install_package(): could not fork new process: %s\n", strerror(forkErrno));
-			return forkErrno;
+			log_msg(stderr, ERR, "install_package(): could not fork new process: %s\n", strerror(errno));
+			return 1;
 		case 0: /* Child process */
 			const int execResult = execvp(cmdArgs[0], (char **)cmdArgs);
 
 			assert(execResult == -1); /* Exec only returns on errors */
-			int const execErrno = errno;
-			log_msg(stderr, ERR, "install_package(): execvp() failed with error: %s\n", strerror(execErrno));
+			log_msg(stderr, ERR, "Error installing package '%s': %s\n", pkg->name, strerror(errno));
 
-			return execErrno;
+			if (pkg->req) {
+				log_msg(stderr, ERR, "Failure to install required package '%s'.\n", pkg->name);
+				/* TODO: Refactor this stuff so that failure to install a required package terminates the program. */
+			}
+
+			/* If execvp() called by the child process failed, the program should exit here otherwise the child process will return to the calling function, install_packages(), and continue to redundandtly install packages in parallel with the parent process. */
+			exit(EXIT_FAILURE); 
 		default:
 			int childResult = -1;
 			const pid_t waitResult = wait(&childResult);
 
 			if (waitResult == -1) {
-				const int forkErrno = errno;
-				log_msg(stderr, ERR, "install_package(): could not wait for PID %d: %s\n", forkPid, strerror(forkErrno));
-
-				return forkErrno;
+				log_msg(stderr, ERR, "install_package(): could not wait for PID %d: %s\n", forkPid, strerror(errno));
+				return 1;
 			}
 
 			/* Assert that what we forked is what we waited for */
