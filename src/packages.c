@@ -85,7 +85,8 @@ int install_package(Package *pkg) {
 		[1] = "--noconfirm", 
 		[2] = "--needed",
 		[3] = "-S",
-		[4] = NULL,
+		[4] = pkg->name,
+		[5] = NULL,
 	};
 
 	const pid_t forkPid = fork();
@@ -93,18 +94,18 @@ int install_package(Package *pkg) {
 	int returnCode = 0;
 	switch (forkPid) {
 		case -1:
-		   log_msg(stderr, ERR, "Error forking process while installing package '%s': %s\n", *(pkg->name), strerror(errno));	
+		   log_msg(stderr, ERR, "Error forking process while installing package '%s': %s\n", pkg->name, strerror(errno));	
 		   returnCode = 1;
 		   break;
 		case 0: /* Child process */
 		   const int execResult = execvp(cmdArgs[0], (char **)cmdArgs);
 
 		   assert(execResult == -1); /* Exec only returns on errors */
-		   log_msg(stderr, ERR, "Error installing package '%s': %s\n", *(pkg->name), strerror(errno));
+		   log_msg(stderr, ERR, "Error installing package '%s': %s\n", pkg->name, strerror(errno));
 		  
 		   /* If execvp returns, it means there was a problem executing the child process, and the program must exit 
-			* here in order to prevent the child process from redundantly installing packages in parallel with the
-			* parent process. */
+			* here in order to prevent the child process from returning to the calling function and redundantly
+			* installing packages in parallel with the parent process. */
 		   exit(EXIT_FAILURE);
 		   break;
 		default: /* Parent process */
@@ -112,14 +113,14 @@ int install_package(Package *pkg) {
 		   const pid_t waitPid = wait(&childResult);
 
 		   if (waitPid == -1) {
-			   log_msg(stderr, ERR, "Error installing package '%s': Failed to wait for PID %d. %s\n", *(pkg->name), forkPid, strerror(errno));
+			   log_msg(stderr, ERR, "Error installing package '%s': Failed to wait for PID %d. %s\n", pkg->name, forkPid, strerror(errno));
 			   returnCode = 1;
 			   break;
 		   }
 
 		   /* Ensure that we waited for the correct process */
 		   if (forkPid != waitPid) {
-			   log_msg(stderr, ERR, "Error installing package '%s': PID of forked process and wait process are not the same.\n", *(pkg->name));
+			   log_msg(stderr, ERR, "Error installing package '%s': PID of forked process and wait process are not the same.\n", pkg->name);
 			   returnCode = 1;
 		   }
 

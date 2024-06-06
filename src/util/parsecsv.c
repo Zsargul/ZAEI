@@ -117,7 +117,7 @@ int parse_package_list(const char* filename, Package *pkgs_array, int size) {
 		}
 		
 		/* Create new package as struct and add to array */
-		Package pkg = { {name}, req, onAur };
+		Package pkg = { name, req, onAur };
 		pkgs_array[lineNo] = pkg;		
 
 		lineNo++;
