@@ -51,12 +51,6 @@ int install_packages(const char* pkgsListFile) {
 					failure();
 				}
 				break;
-			case 2: 
-				/* Error installing package stemming from execvp returning. If this happens, the program must exit 
-				 * here in order to prevent the child process from redundantly installing packages in parallel with
-				 * the parent process. */
-				exit(EXIT_FAILURE);
-				break;
 		}
 	}
 
@@ -77,7 +71,6 @@ int install_packages(const char* pkgsListFile) {
  * Package *pkg - Pointer to pacakge to install
  *
  * Returns:
- * 2 - Error caused by execvp returning
  * 1 - Error installing package
  * 0 - Success installing package
  */
@@ -108,8 +101,11 @@ int install_package(Package *pkg) {
 
 		   assert(execResult == -1); /* Exec only returns on errors */
 		   log_msg(stderr, ERR, "Error installing package '%s': %s\n", *(pkg->name), strerror(errno));
-
-		   returnCode = 2;
+		  
+		   /* If execvp returns, it means there was a problem executing the child process, and the program must exit 
+			* here in order to prevent the child process from redundantly installing packages in parallel with the
+			* parent process. */
+		   exit(EXIT_FAILURE);
 		   break;
 		default: /* Parent process */
 		   int childResult = -1;
@@ -126,9 +122,21 @@ int install_package(Package *pkg) {
 			   log_msg(stderr, ERR, "Error installing package '%s': PID of forked process and wait process are not the same.\n", *(pkg->name));
 			   returnCode = 1;
 		   }
+
+		   /* Handle exit status from child */
+		   if (WIFEXITED(childResult)) {
+			   if (WEXITSTATUS(childResult) == 0) { /* Child succeeded */
+				   /* Nothing to do; child process succeeded as desired */
+			   } else { /* Child process failed but exited normally */
+				   returnCode = 1;
+			   }
+		   } else { /* Child process exited abnormally */
+			   returnCode = 1;
+		   }
 		   break;
 	}
 
+	log_msg(stdout, INFO, "ReturnCode %d\n", returnCode);
 	return returnCode;
 }
 
