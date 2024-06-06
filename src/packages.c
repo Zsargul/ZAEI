@@ -45,7 +45,11 @@ int install_packages(const char* pkgsListFile) {
 				(pkgPtr->onAur) ? aurPkgsCount++ : officialPkgsCount++;
 				break;
 			case 1: /* Error installing package */
-				return -1;
+				/* TODO: Make a log later to log any packages that failed to install */
+				if (pkgPtr->req) {
+					log_msg(stderr, ERR, "Failed to install required package '%s'. Cannot continue with setup.\n", pkgPtr->name);
+					failure();
+				}
 				break;
 			case 2: 
 				/* Error installing package stemming from execvp returning. If this happens, the program must exit 
@@ -54,19 +58,19 @@ int install_packages(const char* pkgsListFile) {
 				exit(EXIT_FAILURE);
 				break;
 		}
-
-		/* TODO: Make sure this is tabbed */
-		log_msg(stdout, INFO,
-				"Successfully installed %d/%d packages.\n"
-				"Packages from official repositories: %d\n"
-				"Packages from Arch user repository: %d\n",
-				successfulInstalls,
-				packageCount,
-				officialPkgsCount,
-				aurPkgsCount);
-
-		return successfulInstalls;
 	}
+
+	/* TODO: Make sure this is tabbed */
+	log_msg(stdout, INFO,
+			"Successfully installed %d/%d packages.\n"
+			"Packages from official repositories: %d\n"
+			"Packages from Arch user repository: %d\n",
+			successfulInstalls,
+			packageCount,
+			officialPkgsCount,
+			aurPkgsCount);
+
+	return successfulInstalls;
 }
 
 /* Arguments:
@@ -96,14 +100,14 @@ int install_package(Package *pkg) {
 	int returnCode = 0;
 	switch (forkPid) {
 		case -1:
-		   log_msg(stderr, ERR, "Error forking process while installing package '%s': %s\n", pkg->name, strerror(errno));	
+		   log_msg(stderr, ERR, "Error forking process while installing package '%s': %s\n", *(pkg->name), strerror(errno));	
 		   returnCode = 1;
 		   break;
 		case 0: /* Child process */
 		   const int execResult = execvp(cmdArgs[0], (char **)cmdArgs);
 
 		   assert(execResult == -1); /* Exec only returns on errors */
-		   log_msg(stderr, ERR, "Error installing package '%s': %s\n", pkg->name, strerror(errno));
+		   log_msg(stderr, ERR, "Error installing package '%s': %s\n", *(pkg->name), strerror(errno));
 
 		   returnCode = 2;
 		   break;
@@ -112,14 +116,14 @@ int install_package(Package *pkg) {
 		   const pid_t waitPid = wait(&childResult);
 
 		   if (waitPid == -1) {
-			   log_msg(stderr, ERR, "Error installing package '%s': Failed to wait for PID %d. %s\n", pkg->name, forkPid, strerror(errno));
+			   log_msg(stderr, ERR, "Error installing package '%s': Failed to wait for PID %d. %s\n", *(pkg->name), forkPid, strerror(errno));
 			   returnCode = 1;
 			   break;
 		   }
 
 		   /* Ensure that we waited for the correct process */
 		   if (forkPid != waitPid) {
-			   log_msg(stderr, ERR, "Error installing package '%s': PID of forked process and wait process are not the same.\n", pkg->name);
+			   log_msg(stderr, ERR, "Error installing package '%s': PID of forked process and wait process are not the same.\n", *(pkg->name));
 			   returnCode = 1;
 		   }
 		   break;
