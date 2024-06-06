@@ -11,10 +11,12 @@
 #include "util/miscutils.h"
 #include "util/logging.h"
 
-/* TODO: Stick to one naming convention for variables for christ's sake */
-/* Return values:
- * -1: Critical error
- *  Other: Number of installed packages
+/* Arguments:
+ * pkgsListFile - Name of .csv file containing list of packages
+ *
+ * Returns:
+ * -1 - Error installing packages
+ * successfulInstalls - Number of package which were successfully installed
  */
 int install_packages(const char* pkgsListFile) {
 	int packageCount = csv_lines(pkgsListFile);
@@ -56,13 +58,20 @@ int install_packages(const char* pkgsListFile) {
 	return successfulInstalls;
 }
 
+/* Arguments:
+ * Package *pkg - Pointer to pacakge to install
+ *
+ * Returns:
+ * 1 - Error installing package
+ * 0 - Success installing package
+ */
 int install_package(Package *pkg) {
-	/* Use AUR helper or official repos for installation */
+	/* Determine if package is installed through AUR or official repos */
 	/* TODO: Use config->aurhelper instead of AUR_HELPER */
 	char packageManager[MAX_STR_LEN];
 	strcpy(packageManager, pkg->onAur ? AUR_HELPER : "pacman");
 
-	const char* cmdArgs[] = { 
+	const char* cmdArgs[] = {
 		[0] = packageManager,
 		[1] = "--noconfirm", 
 		[2] = "--needed",
@@ -72,36 +81,38 @@ int install_package(Package *pkg) {
 
 	const pid_t forkPid = fork();
 
-	/* TODO: Rethink return values for this? */
+	int returnCode = 0;
 	switch (forkPid) {
 		case -1:
-			log_msg(stderr, ERR, "install_package(): could not fork new process: %s\n", strerror(errno));
-			return 1;
+		   log_msg(stderr, ERR, "Error forking process while installing package '%s': %s\n", pkg->name, strerror(errno));	
+		   returnCode = 1;
+		   break;
 		case 0: /* Child process */
-			const int execResult = execvp(cmdArgs[0], (char **)cmdArgs);
+		   const int execResult = execvp(cmdArgs[0], (char **)cmdArgs);
 
-			assert(execResult == -1); /* Exec only returns on errors */
-			log_msg(stderr, ERR, "Error installing package '%s': %s\n", *(pkg->name), strerror(errno));
+		   assert(execResult == -1); /* Exec only returns on errors */
+		   log_msg(stderr, ERR, "Error installing package '%s': %s\n", pkg->name, strerror(errno));
 
-			if (pkg->req) {
-				log_msg(stderr, ERR, "Failure to install required package '%s'.\n", *(pkg->name));
-				/* TODO: Refactor this stuff so that failure to install a required package terminates the program. */
-			}
+		   returnCode = 1;
+		   break;
+		default: /* Parent process */
+		   int childResult = -1;
+		   const pid_t waitPid = wait(&childResult);
 
-			/* If execvp() called by the child process failed, the program should exit here otherwise the child process will return to the calling function, install_packages(), and continue to redundandtly install packages in parallel with the parent process. */
-			exit(EXIT_FAILURE); 
-		default:
-			int childResult = -1;
-			const pid_t waitResult = wait(&childResult);
+		   if (waitPid == -1) {
+			   log_msg(stderr, ERR, "Error installing package '%s': Failed to wait for PID %d. %s\n", pkg->name, forkPid, strerror(errno));
+			   returnCode = 1;
+			   break;
+		   }
 
-			if (waitResult == -1) {
-				log_msg(stderr, ERR, "install_package(): could not wait for PID %d: %s\n", forkPid, strerror(errno));
-				return 1;
-			}
-
-			/* Assert that what we forked is what we waited for */
-			assert(forkPid == waitResult);
-
-			return 0;
+		   /* Ensure that we waited for the correct process */
+		   if (forkPid != waitPid) {
+			   log_msg(stderr, ERR, "Error installing package '%s': PID of forked process and wait process are not the same.\n", pkg->name);
+			   returnCode = 1;
+		   }
+		   break;
 	}
+
+	return returnCode;
 }
+
