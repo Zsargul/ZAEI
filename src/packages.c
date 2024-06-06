@@ -23,7 +23,7 @@ int install_packages(const char* pkgsListFile) {
 	if (packageCount == -1)
 		return -1;
 
-	Package* pkgs = (Package*)malloc(packageCount * sizeof(Package));; /* Array of packages to install */
+	Package* pkgs = (Package*)malloc(packageCount * sizeof(Package));; /* Allocate memory for package array */
 
 	if (parse_package_list(pkgsListFile, pkgs, packageCount) != 0)
 		return -1;
@@ -34,34 +34,46 @@ int install_packages(const char* pkgsListFile) {
 
 	/* TODO: Create tidier print messages using return characters etc. */
 	for (int i = 0; i < packageCount; i++) {
-		Package* pkgPtr = &pkgs[i];
-
-		int ret = install_package(pkgPtr);
-		
 		log_msg(stdout, INFO, "Installing package [%d/%d]\n", i+1, packageCount);
-		if (ret == 0) {
-			successfulInstalls++;
-			(pkgPtr->onAur) ? aurPkgsCount++ : officialPkgsCount++;
+
+		Package* pkgPtr = &pkgs[i];
+		int returnCode = install_package(pkgPtr);
+		
+		switch (returnCode) {
+			case 0:
+				successfulInstalls++;
+				(pkgPtr->onAur) ? aurPkgsCount++ : officialPkgsCount++;
+				break;
+			case 1: /* Error installing package */
+				return -1;
+				break;
+			case 2: 
+				/* Error installing package stemming from execvp returning. If this happens, the program must exit 
+				 * here in order to prevent the child process from redundantly installing packages in parallel with
+				 * the parent process. */
+				exit(EXIT_FAILURE);
+				break;
 		}
+
+		/* TODO: Make sure this is tabbed */
+		log_msg(stdout, INFO,
+				"Successfully installed %d/%d packages.\n"
+				"Packages from official repositories: %d\n"
+				"Packages from Arch user repository: %d\n",
+				successfulInstalls,
+				packageCount,
+				officialPkgsCount,
+				aurPkgsCount);
+
+		return successfulInstalls;
 	}
-
-	/* TODO: Make sure this is tabbed */
-	log_msg(stdout, INFO,
-			"Successfully installed %d/%d packages.\n"
-			"Packages from official repositories: %d\n"
-			"Packages from Arch user repository: %d\n",
-			successfulInstalls,
-			packageCount,
-			officialPkgsCount,
-			aurPkgsCount);
-
-	return successfulInstalls;
 }
 
 /* Arguments:
  * Package *pkg - Pointer to pacakge to install
  *
  * Returns:
+ * 2 - Error caused by execvp returning
  * 1 - Error installing package
  * 0 - Success installing package
  */
@@ -93,7 +105,7 @@ int install_package(Package *pkg) {
 		   assert(execResult == -1); /* Exec only returns on errors */
 		   log_msg(stderr, ERR, "Error installing package '%s': %s\n", pkg->name, strerror(errno));
 
-		   returnCode = 1;
+		   returnCode = 2;
 		   break;
 		default: /* Parent process */
 		   int childResult = -1;
